@@ -5,8 +5,11 @@ class Character extends MovableObjekt {
     world;
     speed = 3;
     walking_audio = new Audio('./audio/running.mp3');
-
-
+    hitpoints = 100;
+    bottleEnergy = 0;
+    lastHit = 0;
+    coins = 0;
+    otherDiscption = false;
     IMG_WALKIN = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -95,6 +98,7 @@ class Character extends MovableObjekt {
             if (this.isDead()) {
                 console.log('dead');
                 this.playAnimation(this.IMG_DEAD);
+                this.characterIsDead();
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMG_HURT);
             } else if (this.isAboveGround()) {

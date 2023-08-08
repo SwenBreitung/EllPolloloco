@@ -3,7 +3,7 @@ class Coin extends MovableObjekt {
     width = 100;
     heigth = 100;
     x = 0;
-
+    coins = 0;
 
     constructor(imgPath, x) {
         super().loadImg(imgPath, x);
@@ -14,7 +14,7 @@ class Coin extends MovableObjekt {
 
     animation() {
         setInterval(() => {
-            this.playAnimation(level.coin);
+            this.playAnimation(level.healthItem);
         }, 50);
     }
 }

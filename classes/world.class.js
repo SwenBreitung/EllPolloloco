@@ -9,6 +9,8 @@ class World {
     statusBarEnergyBottle = new StatusBarEnergyBottle();
     statusBarCoin = new StatusBarCoin();
     throwableObjekt = [new ThrowableObjekt()];
+    spawnChickens = [];
+    justTrewBottle = false;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d')
@@ -43,26 +45,32 @@ class World {
         //Läd die elemente der Map
         this.addToMapForEach(this.lvl.backgroundObjekts);
         //Läd die elemente der objekte 
+        this.addToMapForEach(this.lvl.clouds);
 
-
+        this.addToMapForEach(this.lvl.midClouds);
+        this.addToMapForEach(this.lvl.highClouds);
         this.addToMapForStaticObjekt(this.statusBar)
         this.addToMapForStaticObjekt(this.statusBarEnergyBottle)
         this.addToMapForStaticObjekt(this.statusBarCoin)
         this.addToMap(this.character);
 
-
         if (this.keyboard.SHIFT) {
             this.addToMapForEach(this.throwableObjekt);
         }
-
-        this.addToMapForEach(this.lvl.salsaBottle);
-        this.addToMapForEach(this.lvl.clouds);
         this.addToMapForEach(this.lvl.enemies);
+        this.addToMapForEach(this.spawnChickens);
+        this.addToMapForEach(this.lvl.salsaBottle);
+
+
+        this.addToMapForEach(this.lvl.jumpChickens);
         this.addToMapForEach(this.lvl.coin);
+        this.addToMapForEach(this.lvl.healthItem);
+        this.addToMapForEach(this.lvl.infiniteChickens);
+        this.addToMapForEach(this.lvl.endboss);
+
         //beeinflusst die kamera und sorgt dafür das diese auf den char bleibt
         this.ctx.translate(-this.camera_x, 0)
     }
-
 
 
     addToMap(e) {
@@ -95,78 +103,203 @@ class World {
     //=========================Desing the Wolrd END=======================================
 
 
+
     run() {
         setInterval(() => {
             this.checkThrowObject();
+        }, 400);
+
+        setInterval(() => {
             this.checkColision();
-        }, 500);
+        }, 50);
+        this.handleEnemyCollisions();
+        this.handleCollisionWithEndboss();
+        this.isCharacterSpottedByBoss();
+        this.isCharacterSpottedByJumpingChicken();
     }
 
 
     checkThrowObject() {
-        if (this.keyboard.SHIFT && this.character.bottleEnergy >= 20) {
+        if (this.keyboard.SHIFT && this.character.bottleEnergy >= 20 && !this.justTrewBottle) {
             this.character.bottleEngeryNegativCalc();
             this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
             let bottle = new ThrowableObjekt(this.character.x, this.character.y);
             this.throwableObjekt.push(bottle);
-
-
+            this.justTrewBottle = true;
+            setTimeout(() => {
+                this.justTrewBottle = false;
+            }, 1000)
         }
     }
 
-    isColliding2(obj, obj2) {
-        return (obj2.x + obj2.width) >= obj.x && obj2.x <= (obj.x + obj.width) &&
-            (obj2.y + obj2.heigth) >= obj.y &&
-            (obj2.y) <= (obj.y + obj.heigth);
-        // obj.onCollisionCourse; // Optional: hiermit könnten wir schauen, ob ein Objekt sich in die richtige Richtung bewegt. Nur dann kollidieren wir. Nützlich bei Gegenständen, auf denen man stehen kann.
+
+    isCharacterSpottedByJumpingChicken() {
+        setInterval(() => {
+            this.lvl.jumpChickens.forEach((jumpChicken, i) => {
+                // console.log(endboss);
+                this.character.jumpingChickenSpotCharacter(jumpChicken, i);
+                // if (this.lvl.endboss[i].isSpotted == true) {
+                // console.log(`gefunden`);
+                // } else {
+                //     console.log('nicht gefunden')
+                // }
+            });
+        }, 500);
     }
 
-    checkColision() {
 
-        this.throwableObjekt.forEach((throwableObjekt) => {
-            this.lvl.enemies.forEach((enemy) => {
-                if (this.isColliding2(throwableObjekt, enemy)) {
-                    this.throwableObjekt.dmgCollisionCalc();
+    isCharacterSpottedByBoss() {
+        setInterval(() => {
+            this.lvl.endboss.forEach((endboss, i) => {
+                // console.log(endboss);
+                this.character.bossSpotCharacter(endboss, i);
+                // if (this.lvl.endboss[i].isSpotted == true) {
+                //     console.log(`gefunden`);
+                // } else {
+                //     console.log('nicht gefunden')
+                // }
+            });
+        }, 500);
+    }
+
+
+    handleCollisionWithEndboss() {
+        setInterval(() => {
+            this.lvl.endboss.forEach((endboss) => {
+                if (this.character.isColliding(endboss)) {
+                    this.character.dmgCollisionCalc();
                     this.statusBar.setPercentet(this.character.hitpoints);
-                    console.log('treffer', enemy)
                 }
             });
+        }, 500);
+    }
+
+
+    handleEnemyCollisions() {
+        this.dmgFromEnemy();
+        this.killEnemy();
+    }
+
+
+    killEnemy() {
+        setInterval(() => {
+            this.lvl.enemies.forEach((enemy, i) => {
+                if (this.character.isColliding(enemy) && this.character.isAboveGround()) {
+                    this.lvl.enemies.splice(i, 1);
+                }
+            });
+            this.spawnChickens.forEach((spawnChicken, i) => {
+                if (this.character.isColliding(spawnChicken) && this.character.isAboveGround()) {
+                    this.spawnChickens.splice(i, 1);
+                }
+            });
+            this.lvl.infiniteChickens.forEach((infiniteChicken, i) => {
+                if (this.character.isColliding(infiniteChicken) && this.character.isAboveGround()) {
+                    this.lvl.infiniteChickens.splice(i, 1);
+                }
+            });
+        }, 50);
+    }
+
+
+    dmgFromEnemy() {
+        setInterval(() => {
+            this.lvl.enemies.forEach((enemy) => {
+                if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+                    this.character.dmgCollisionCalc();
+                    this.statusBar.setPercentet(this.character.hitpoints);
+                }
+            });
+
+            this.spawnChickens.forEach((spawnChicken) => {
+                if (this.character.isColliding(spawnChicken) && !this.character.isAboveGround()) {
+                    this.character.dmgCollisionCalc();
+                    this.statusBar.setPercentet(this.character.hitpoints);
+                }
+            });
+
+            this.lvl.jumpChickens.forEach((jumpChicken) => {
+                if (this.character.isColliding(jumpChicken) && !this.character.isAboveGround()) {
+                    this.character.dmgCollisionCalc();
+                    this.statusBar.setPercentet(this.character.hitpoints);
+                }
+            });
+
+            this.lvl.infiniteChickens.forEach((infiniteChicken) => {
+                if (this.character.isColliding(infiniteChicken) && !this.character.isAboveGround()) {
+                    this.character.dmgCollisionCalc();
+                    this.statusBar.setPercentet(this.character.hitpoints);
+                }
+            });
+        }, 1000);
+    }
+
+
+    checkColision() {
+        this.throwableObjekt.forEach((throwableObjekt, i) => {
+            this.lvl.enemies.forEach((enemy) => {
+                if (throwableObjekt.isColliding(enemy)) {
+                    this.throwableObjekt.splice(i, 1);
+                    // console.log('treffer', enemy, throwableObjekt)
+                }
+            })
+        });
+
+        this.throwableObjekt.forEach((throwableObjekt, i) => {
+            this.lvl.endboss.forEach((endboss, j) => {
+                if (throwableObjekt.isColliding(endboss)) {
+                    // this.character.bottleAttackOnBoss(i);
+                    this.throwableObjekt.splice(i, 1);
+                    this.lvl.endboss[j].dmgCollisionCalc();
+                    console.log('treffer', endboss, throwableObjekt)
+                }
+            })
         });
 
 
-        this.lvl.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy)) {
-                this.character.dmgCollisionCalc();
+        this.lvl.coin.forEach((coin, i) => {
+            if (this.character.isColliding(coin) && this.max100EnergyCoins()) {
+                this.statusBarCoin.setPercentet(this.character.coins);
+                this.lvl.coin.splice(i, 1);
+                this.character.coinsPositivCalc();
+                this.statusBarCoin.setPercentet(this.character.coins);
+            }
+        });
+
+
+        this.lvl.healthItem.forEach((healthItem, i) => {
+            if (this.character.isColliding(healthItem) && this.maxHitpoints()) {
+                this.statusBarCoin.setPercentet(this.character.hitpoints);
+                this.lvl.healthItem.splice(i, 1);
+                this.character.hitpointsPositivCalc();
                 this.statusBar.setPercentet(this.character.hitpoints);
             }
         });
 
-        this.lvl.coin.forEach((coin, i) => {
-            if (this.character.isColliding(coin) && this.max100EnergyCoins()) {
-                this.statusBar.setPercentet(this.character.coins);
-                this.lvl.coin.splice(i, 1);
-                this.character.coinsPositivCalc();
-
-                this.statusBarCoin.setPercentet(this.character.coins);
-                console.log('coins');
-            }
-        });
-
-
 
         this.lvl.salsaBottle.forEach((salsaBottle, i) => {
+
             if (this.character.isColliding(salsaBottle) && this.max100EnergyBottle()) {
                 this.character.bottleEngeryPositivCalc();
-                console.log(`Collision with bottle at index`, i);
+                // console.log(`Collision with bottle at index`, i);
                 this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
                 this.lvl.salsaBottle.splice(i, 1);
             }
+
+
         });
     }
+
+
+    maxHitpoints() {
+        return this.character.hitpoints < 100;
+    }
+
 
     max100EnergyCoins() {
         return this.character.coins < 100;
     }
+
 
     max100EnergyBottle() {
         return this.character.bottleEnergy < 100;
@@ -191,5 +324,6 @@ class World {
 
 
     //===================================Flipp the Objekt and return END================================
+
 
 }

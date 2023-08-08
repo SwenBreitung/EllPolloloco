@@ -26,7 +26,6 @@ window.addEventListener("keydown", (e) => {
     } else if (e.keyCode == 16) {
         keyboard.SHIFT = true;
     }
-    console.log(keyboard);
 });
 
 window.addEventListener("keyup", (e) => {
@@ -43,5 +42,4 @@ window.addEventListener("keyup", (e) => {
     } else if (e.keyCode == 16) {
         keyboard.SHIFT = false;
     }
-    console.log(keyboard);
 });
