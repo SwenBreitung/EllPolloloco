@@ -1,15 +1,17 @@
 class Character extends MovableObjekt {
     y = 80;
-    width = 50;
-    heigth = 150;
+    width = 100;
+    heigth = 200;
     world;
     speed = 3;
     walking_audio = new Audio('./audio/running.mp3');
+    jump_audio = new Audio('audio/jumping_1-6452.mp3');
     hitpoints = 100;
     bottleEnergy = 0;
     lastHit = 0;
     coins = 0;
     otherDiscption = false;
+
     IMG_WALKIN = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -60,8 +62,9 @@ class Character extends MovableObjekt {
 
 
     moving() {
-        setInterval(() => {
+        setStoppebleInterval(() => {
             this.soundStop(this.walking_audio);
+            this.soundStop(this.jump_audio);
             if (this.hitpoints > 0) {
                 this.moveRight();
                 this.moveLeft();
@@ -73,9 +76,25 @@ class Character extends MovableObjekt {
         }, 1000 / 60)
     }
 
+    jump() {
+        if (this.world.keyboard.SPACE) {
+            this.soundPlay(this.jump_audio, 0.4)
+            super.jump();
+        }
 
+    }
 
     moveLeft() {
+        this.moveLeftPressKey();
+    }
+
+    moveRight() {
+        this.moveRightPressKey();
+
+    }
+
+
+    moveLeftPressKey() {
         if (this.world.keyboard.LEFT && this.x > -719) {
             this.otherDiscption = true;
             this.soundPlay(this.walking_audio, 0.2)
@@ -84,7 +103,7 @@ class Character extends MovableObjekt {
     }
 
 
-    moveRight() {
+    moveRightPressKey() {
         if (this.world.keyboard.RIGHT && this.x < this.world.lvl.lvl_end_x) {
             this.otherDiscption = false;
             this.soundPlay(this.walking_audio, 0.2)
@@ -92,13 +111,15 @@ class Character extends MovableObjekt {
         }
     }
 
+
     animation() {
-        setInterval(() => {
+        setStoppebleInterval(() => {
 
             if (this.isDead()) {
                 console.log('dead');
                 this.playAnimation(this.IMG_DEAD);
-                this.characterIsDead();
+
+                this.world.isLose();
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMG_HURT);
             } else if (this.isAboveGround()) {

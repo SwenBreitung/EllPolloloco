@@ -13,7 +13,7 @@ class Coin extends MovableObjekt {
 
 
     animation() {
-        setInterval(() => {
+        setStoppebleInterval(() => {
             this.playAnimation(level.healthItem);
         }, 50);
     }

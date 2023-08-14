@@ -3,31 +3,30 @@ class MovableObjekt extends DrawableObjekt {
     speedY = 0;
     acceleration = 2.5;
 
-
     offsetY = 10;
     offsetX = 20;
 
     //------ move automatic for objects--------------------
 
     moveRight(speed) {
-        setInterval(() => {
+        setStoppebleInterval(() => {
             this.x += this.speed;
         }, speed / 60)
     }
 
-    moveLeft(fps, speed) {
+
+    moveLeft(milliseconds, speed) {
         setInterval(() => {
             this.x -= speed;
-        }, fps / 60)
+        }, milliseconds)
     }
 
 
     jump() {
-        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+        if (!this.isAboveGround()) {
             this.speedY = 30;
         }
     }
-
 
     //================== move automatic for objects END=================
 
@@ -37,7 +36,6 @@ class MovableObjekt extends DrawableObjekt {
         this.img = this.imgCach[path];
         this.currentImg++;
     }
-
 
     //--------------------Gravaty---------------------
 
@@ -55,7 +53,7 @@ class MovableObjekt extends DrawableObjekt {
         if (this instanceof ThrowableObjekt) {
             return true;
         } else {
-            return this.y < 290;
+            return this.y < 240;
         }
     }
 
@@ -71,19 +69,11 @@ class MovableObjekt extends DrawableObjekt {
     }
 
 
-
     isColliding(obj) {
-            return (this.x + this.width) >= obj.x && this.x <= (obj.x + obj.width) &&
-                (this.y + this.offsetY + this.heigth) >= obj.y &&
-                (this.y + this.offsetY) <= (obj.y + obj.heigth);
-            // &&    obj.onCollisionCourse // Optional: hiermit könnten wir schauen, ob ein Objekt sich in die richtige Richtung bewegt. Nur dann kollidieren wir. Nützlich bei Gegenständen, auf denen man stehen kann.
-        }
-        // isColliding(obj) {
-        //     return (this.x + this.width) - this.offset.right >= obj.x && this.x <= (obj.x + obj.width) &&
-        //         (this.y + this.offset.right + this.height) >= obj.y &&
-        //         (this.y + this.offsetY) <= (obj.Y + obj.height) &&
-        //         obj.onCollisionCourse;
-        // }
+        return (this.x + this.width) >= obj.x && this.x <= (obj.x + obj.width) &&
+            (this.y + this.offsetY + this.heigth) >= obj.y &&
+            (this.y + this.offsetY) <= (obj.y + obj.heigth);
+    }
 
 
     //Bottle engery Calc--------------------------------------------------
@@ -122,12 +112,6 @@ class MovableObjekt extends DrawableObjekt {
     }
 
 
-    // bottleAttackOnBoss(i) {
-    //     // this.lvl.endboss[i].hitpointsBoss -= 20;
-    //     // this.hitpointsBoss -= 20;
-    //     this.world.lvl.endboss[i].hitpoints -= 20;
-    // }
-
     bottleEngeryNegativCalc() {
         this.bottleEnergy -= 20;;
     }
@@ -137,9 +121,11 @@ class MovableObjekt extends DrawableObjekt {
         this.bottleEnergy += 20;;
     }
 
+
     hitpointsPositivCalc() {
         this.hitpoints += 20;;
     }
+
 
     coinsPositivCalc() {
         this.coins += 20;;
@@ -155,8 +141,6 @@ class MovableObjekt extends DrawableObjekt {
 
 
     //dmg calc------------------------------------------------------------
-
-
 
     dmgCollisionCalc() {
         this.dmgHit20HP();
@@ -185,9 +169,6 @@ class MovableObjekt extends DrawableObjekt {
     }
 
 
-    characterIsDead() {
-        // this.gameEndScreen();
-    }
 
 
     isHurt() {

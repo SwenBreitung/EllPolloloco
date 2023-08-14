@@ -21,9 +21,7 @@ class World {
         this.run();
     }
 
-
     //---------------------Desing the Wolrd---------------------------------
-
 
     setWorld() {
         this.character.world = this;
@@ -35,41 +33,64 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         // generiert die map 
         this.ctx.translate(this.camera_x, 0)
-
-        //Dies ist für die Animation, bzw fürs neuladen der Bilder (FPS)
+            //Dies ist für die Animation, bzw fürs neuladen der Bilder (FPS)
         let self = this
         requestAnimationFrame(function() {
             self.draw();
         });
-
         //Läd die elemente der Map
         this.addToMapForEach(this.lvl.backgroundObjekts);
         //Läd die elemente der objekte 
-        this.addToMapForEach(this.lvl.clouds);
+        this.addToMapForEachAllObjekts();
+        //beeinflusst die kamera und sorgt dafür das diese auf den char bleibt
+        this.ctx.translate(-this.camera_x, 0)
+    }
 
+
+    addToMapForEachAllObjekts() {
+        this.addToMapForEachLoadClouds();
+        this.addToMapForEachLoadStatusBars();
+        this.addToMap(this.character);
+        this.addToMapForEachThrowableObjekt()
+        this.addToMapForEachObjekts();
+        this.addToMapForEachEnemys();
+        this.addToMapForEach(this.lvl.endboss);
+    }
+
+
+    addToMapForEachLoadClouds() {
+        this.addToMapForEach(this.lvl.clouds);
         this.addToMapForEach(this.lvl.midClouds);
         this.addToMapForEach(this.lvl.highClouds);
+    }
+
+
+    addToMapForEachLoadStatusBars() {
         this.addToMapForStaticObjekt(this.statusBar)
         this.addToMapForStaticObjekt(this.statusBarEnergyBottle)
         this.addToMapForStaticObjekt(this.statusBarCoin)
-        this.addToMap(this.character);
+    }
 
+
+    addToMapForEachThrowableObjekt() {
         if (this.keyboard.SHIFT) {
             this.addToMapForEach(this.throwableObjekt);
         }
-        this.addToMapForEach(this.lvl.enemies);
-        this.addToMapForEach(this.spawnChickens);
-        this.addToMapForEach(this.lvl.salsaBottle);
+    }
 
 
-        this.addToMapForEach(this.lvl.jumpChickens);
+    addToMapForEachObjekts() {
         this.addToMapForEach(this.lvl.coin);
         this.addToMapForEach(this.lvl.healthItem);
-        this.addToMapForEach(this.lvl.infiniteChickens);
-        this.addToMapForEach(this.lvl.endboss);
+        this.addToMapForEach(this.lvl.salsaBottle);
+    }
 
-        //beeinflusst die kamera und sorgt dafür das diese auf den char bleibt
-        this.ctx.translate(-this.camera_x, 0)
+
+    addToMapForEachEnemys() {
+        this.addToMapForEach(this.lvl.enemies);
+        this.addToMapForEach(this.spawnChickens);
+        this.addToMapForEach(this.lvl.jumpChickens);
+        this.addToMapForEach(this.lvl.infiniteChickens);
     }
 
 
@@ -77,10 +98,8 @@ class World {
         if (e.otherDiscption) {
             this.flippImg(e);
         }
-
         e.draw(this.ctx);
         e.drawBorder(this.ctx);
-
         if (e.otherDiscption) {
             this.flippImgBack(e);
         }
@@ -102,20 +121,24 @@ class World {
 
     //=========================Desing the Wolrd END=======================================
 
-
-
     run() {
-        setInterval(() => {
+        setStoppebleInterval(() => {
             this.checkThrowObject();
-        }, 400);
+        }, 500);
 
-        setInterval(() => {
+        setStoppebleInterval(() => {
             this.checkColision();
         }, 50);
         this.handleEnemyCollisions();
-        this.handleCollisionWithEndboss();
-        this.isCharacterSpottedByBoss();
-        this.isCharacterSpottedByJumpingChicken();
+        this.spottingEnemys();
+    }
+
+
+    spottingEnemys() {
+        setStoppebleInterval(() => {
+            this.isCharacterSpottedByBoss();
+            this.isCharacterSpottedByJumpingChicken();
+        }, 500);
     }
 
 
@@ -125,6 +148,7 @@ class World {
             this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
             let bottle = new ThrowableObjekt(this.character.x, this.character.y);
             this.throwableObjekt.push(bottle);
+
             this.justTrewBottle = true;
             setTimeout(() => {
                 this.justTrewBottle = false;
@@ -134,37 +158,25 @@ class World {
 
 
     isCharacterSpottedByJumpingChicken() {
-        setInterval(() => {
-            this.lvl.jumpChickens.forEach((jumpChicken, i) => {
-                // console.log(endboss);
-                this.character.jumpingChickenSpotCharacter(jumpChicken, i);
-                // if (this.lvl.endboss[i].isSpotted == true) {
-                // console.log(`gefunden`);
-                // } else {
-                //     console.log('nicht gefunden')
-                // }
-            });
-        }, 500);
+
+        this.lvl.jumpChickens.forEach((jumpChicken, i) => {
+            this.character.jumpingChickenSpotCharacter(jumpChicken, i);
+        });
+
     }
 
 
     isCharacterSpottedByBoss() {
-        setInterval(() => {
-            this.lvl.endboss.forEach((endboss, i) => {
-                // console.log(endboss);
-                this.character.bossSpotCharacter(endboss, i);
-                // if (this.lvl.endboss[i].isSpotted == true) {
-                //     console.log(`gefunden`);
-                // } else {
-                //     console.log('nicht gefunden')
-                // }
-            });
-        }, 500);
+
+        this.lvl.endboss.forEach((endboss, i) => {
+            this.character.bossSpotCharacter(endboss, i);
+        });
+
     }
 
 
     handleCollisionWithEndboss() {
-        setInterval(() => {
+        setStoppebleInterval(() => {
             this.lvl.endboss.forEach((endboss) => {
                 if (this.character.isColliding(endboss)) {
                     this.character.dmgCollisionCalc();
@@ -176,97 +188,76 @@ class World {
 
 
     handleEnemyCollisions() {
-        this.dmgFromEnemy();
+        this.dmgFromEnemys();
         this.killEnemy();
+        this.handleCollisionWithEndboss();
     }
 
 
     killEnemy() {
-        setInterval(() => {
-            this.lvl.enemies.forEach((enemy, i) => {
-                if (this.character.isColliding(enemy) && this.character.isAboveGround()) {
-                    this.lvl.enemies.splice(i, 1);
-                }
-            });
-            this.spawnChickens.forEach((spawnChicken, i) => {
-                if (this.character.isColliding(spawnChicken) && this.character.isAboveGround()) {
-                    this.spawnChickens.splice(i, 1);
-                }
-            });
-            this.lvl.infiniteChickens.forEach((infiniteChicken, i) => {
-                if (this.character.isColliding(infiniteChicken) && this.character.isAboveGround()) {
-                    this.lvl.infiniteChickens.splice(i, 1);
-                }
-            });
+        setStoppebleInterval(() => {
+            this.lvl.enemies.forEach((enemy, i) => this.killWithCollidingEnemy(enemy, i, this.lvl.enemies));
+            this.spawnChickens.forEach((spawnChicken, i) => this.killWithCollidingEnemy(spawnChicken, i, this.spawnChickens));
+            this.lvl.infiniteChickens.forEach((infiniteChicken, i) => this.killWithCollidingEnemy(infiniteChicken, i, this.lvl.infiniteChickens));
         }, 50);
     }
 
+    killWithCollidingEnemy(infiniteChicken, i, arry) {
+        if (this.character.isColliding(infiniteChicken) && this.character.isAboveGround()) {
+            arry.splice(i, 1);
+        }
+    }
 
-    dmgFromEnemy() {
-        setInterval(() => {
-            this.lvl.enemies.forEach((enemy) => {
-                if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
-                    this.character.dmgCollisionCalc();
-                    this.statusBar.setPercentet(this.character.hitpoints);
-                }
-            });
 
-            this.spawnChickens.forEach((spawnChicken) => {
-                if (this.character.isColliding(spawnChicken) && !this.character.isAboveGround()) {
-                    this.character.dmgCollisionCalc();
-                    this.statusBar.setPercentet(this.character.hitpoints);
-                }
-            });
-
-            this.lvl.jumpChickens.forEach((jumpChicken) => {
-                if (this.character.isColliding(jumpChicken) && !this.character.isAboveGround()) {
-                    this.character.dmgCollisionCalc();
-                    this.statusBar.setPercentet(this.character.hitpoints);
-                }
-            });
-
-            this.lvl.infiniteChickens.forEach((infiniteChicken) => {
-                if (this.character.isColliding(infiniteChicken) && !this.character.isAboveGround()) {
-                    this.character.dmgCollisionCalc();
-                    this.statusBar.setPercentet(this.character.hitpoints);
-                }
-            });
+    dmgFromEnemys() {
+        setStoppebleInterval(() => {
+            this.lvl.enemies.forEach((enemy) => this.dmgFromEnemy(enemy));
+            this.spawnChickens.forEach((spawnChicken) => this.dmgFromEnemy(spawnChicken));
+            this.lvl.jumpChickens.forEach((jumpChicken) => this.dmgFromEnemy(jumpChicken));
+            this.lvl.infiniteChickens.forEach((infiniteChicken) => this.dmgFromEnemy(infiniteChicken));
         }, 1000);
     }
 
 
+    dmgFromEnemy(enemy) {
+        if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+            this.character.dmgCollisionCalc();
+            this.statusBar.setPercentet(this.character.hitpoints);
+        }
+    }
+
+
     checkColision() {
-        this.throwableObjekt.forEach((throwableObjekt, i) => {
-            this.lvl.enemies.forEach((enemy) => {
-                if (throwableObjekt.isColliding(enemy)) {
-                    this.throwableObjekt.splice(i, 1);
-                    // console.log('treffer', enemy, throwableObjekt)
-                }
-            })
-        });
-
-        this.throwableObjekt.forEach((throwableObjekt, i) => {
-            this.lvl.endboss.forEach((endboss, j) => {
-                if (throwableObjekt.isColliding(endboss)) {
-                    // this.character.bottleAttackOnBoss(i);
-                    this.throwableObjekt.splice(i, 1);
-                    this.lvl.endboss[j].dmgCollisionCalc();
-                    console.log('treffer', endboss, throwableObjekt)
-                }
-            })
-        });
+        this.checkThrowableObjectEnemysCollisions()
+        this.checkCharacterObjectsCollisions();
+    }
 
 
-        this.lvl.coin.forEach((coin, i) => {
-            if (this.character.isColliding(coin) && this.max100EnergyCoins()) {
-                this.statusBarCoin.setPercentet(this.character.coins);
-                this.lvl.coin.splice(i, 1);
-                this.character.coinsPositivCalc();
-                this.statusBarCoin.setPercentet(this.character.coins);
+    checkThrowableObjectEnemysCollisions() {
+        this.checkThrowableObjectEnemyCollisions();
+        this.checkThrowableObjectEndbossCollisions();
+    }
+
+
+    checkCharacterObjectsCollisions() {
+        this.checkCharacterCoinCollisions();
+        this.checkCharacterHealthItemCollisions();
+        this.checkCharacterSalsaBottleCollisions();
+    }
+
+
+    checkCharacterSalsaBottleCollisions(mo) {
+        this.lvl.salsaBottle.forEach((salsaBottle, i) => {
+            if (this.character.isColliding(salsaBottle) && this.max100EnergyBottle()) {
+                this.character.bottleEngeryPositivCalc();
+                this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
+                this.lvl.salsaBottle.splice(i, 1);
             }
         });
+    }
 
 
+    checkCharacterHealthItemCollisions() {
         this.lvl.healthItem.forEach((healthItem, i) => {
             if (this.character.isColliding(healthItem) && this.maxHitpoints()) {
                 this.statusBarCoin.setPercentet(this.character.hitpoints);
@@ -275,18 +266,49 @@ class World {
                 this.statusBar.setPercentet(this.character.hitpoints);
             }
         });
+    }
 
 
-        this.lvl.salsaBottle.forEach((salsaBottle, i) => {
-
-            if (this.character.isColliding(salsaBottle) && this.max100EnergyBottle()) {
-                this.character.bottleEngeryPositivCalc();
-                // console.log(`Collision with bottle at index`, i);
-                this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
-                this.lvl.salsaBottle.splice(i, 1);
+    checkCharacterCoinCollisions() {
+        this.lvl.coin.forEach((coin, i) => {
+            if (this.character.isColliding(coin) && this.max100EnergyCoins()) {
+                this.statusBarCoin.setPercentet(this.character.coins);
+                this.lvl.coin.splice(i, 1);
+                this.character.coinsPositivCalc();
+                this.statusBarCoin.setPercentet(this.character.coins);
             }
+        });
+    }
 
 
+    checkThrowableObjectEndbossCollisions() {
+        this.throwableObjekt.forEach((throwableObjekt, i) => {
+            this.lvl.endboss.forEach((endboss, j) => {
+                if (throwableObjekt.isColliding(endboss)) {
+                    this.lvl.endboss[j].dmgCollisionCalc();
+                    this.throwableObjekt[i].collisionBottle = true;
+                    this.throwableObjekt.splice(i, 1);
+                    setTimeout(() => {
+                        this.ThrowableObjekt = false;
+                    }, 500)
+                }
+            })
+        });
+    }
+
+
+    checkThrowableObjectEnemyCollisions() {
+        this.throwableObjekt.forEach((throwableObjekt, i) => {
+            this.lvl.enemies.forEach((enemy) => {
+                if (throwableObjekt.isColliding(enemy)) {
+                    this.throwableObjekt[i].collisionBottle = true;
+                    setTimeout(() => {
+                        this.throwableObjekt.splice(i, 1);
+                        this.ThrowableObjekt = false;
+                    }, 500)
+
+                }
+            })
         });
     }
 
@@ -322,8 +344,29 @@ class World {
         this.ctx.restore();
     }
 
+    isLose() {
+        if (world.character.hitpoints === 0) {
+            resumeGame();
+            const endScreen = document.getElementById('end-screen');
+            const body = document.getElementById('body');
+            const h1 = document.getElementById('h1');
+            endScreen.innerHTML = '<img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">';
+            endScreen.classList.remove('d-none');
+            body.classList.remove('column');
+            h1.classList.add('d-none');
 
-    //===================================Flipp the Objekt and return END================================
+        }
+    }
+
+    isWin() {
+            if (world.endboss.hitpoints === 0) {
+                clearAllIntervals();
+                const endScreen = document.getElementById('end-screen');
+                endScreen.innerHTML = '<img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">';
+
+            }
+        }
+        //===================================Flipp the Objekt and return END================================
 
 
 }

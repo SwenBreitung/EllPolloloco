@@ -34,36 +34,51 @@ class InfiniteChicken extends MovableObjekt {
 
 
     moving() {
-        this.moveLeft(500, this.speed);
         setInterval(() => {
-            this.moveRight();
-            this.moveLeft();
+            this.infiniteChickenMove()
         }, 50);
     }
 
 
-    moveRight() {
-        if (this.rightLimit > this.x && this.otherDiscption) {
-            this.otherDiscption = true;
-            this.x += this.speed;
-        } else {
-            if (this.x >= this.rightLimit - 10 && this.x <= this.rightLimit + 10) {
-                this.jumping();
-            }
-            this.otherDiscption = false;
-        }
-
+    infiniteChickenMove() {
+        this.infiniteChickenMoveRight();
+        this.infiniteChickenMoveLeft();
     }
 
-    moveLeft() {
-        if ((this.leftLimit < this.x || this.x < -719) && !this.otherDiscption) {
+
+    infiniteChickenMoveLeft() {
+        if ((this.leftLimitReached() || this.leftAreaEnd()) && !this.otherDiscption) {
             this.otherDiscption = false;
             this.x -= this.speed;
         } else {
-            if (this.x >= this.leftLimit - 10 && this.x <= this.leftLimit + 10) {
+            if (this.isXInRangeOfLeftLimit()) {
                 this.jumping();
             }
             this.otherDiscption = true;
+        }
+    }
+
+    isXInRangeOfLeftLimit() {
+        return this.x >= this.leftLimit - 10 && this.x <= this.leftLimit + 10
+    }
+
+    leftAreaEnd() {
+        return this.x < -719
+    }
+
+    leftLimitReached() {
+        return this.leftLimit < this.x
+    }
+
+    infiniteChickenMoveRight() {
+        if (this.isWithinRightLimit() && this.otherDiscption) {
+            this.otherDescription = true;
+            this.x += this.speed;
+        } else {
+            if (this.isWithinRightLimitRange()) {
+                this.jumping();
+            }
+            this.otherDiscption = false;
         }
     }
 
@@ -85,7 +100,9 @@ class InfiniteChicken extends MovableObjekt {
             }
         }, 1000 / 60)
     }
+    updateChickenPositionAboveGround() {
 
+    }
 
     jumping() {
         if (!this.isAboveGroundchicken()) {
@@ -95,9 +112,17 @@ class InfiniteChicken extends MovableObjekt {
 
 
     animation() {
-        setInterval(() => {
-            this.playAnimation(this.IMG_WALKIN);
-        }, 50);
+        setInterval(() => this.playAnimation(this.IMG_WALKIN), 50);
+    }
+
+
+    isWithinRightLimit() {
+        return this.rightLimit > this.x;
+    }
+
+
+    isWithinRightLimitRange() {
+        return this.x >= this.rightLimit - 10 && this.x <= this.rightLimit + 10;
     }
 
 }

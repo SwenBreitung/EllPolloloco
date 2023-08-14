@@ -8,12 +8,12 @@
      constructor(imgPath, x) {
          super().loadImg(imgPath, x);
          this.x = x + Math.random() * 250;;
-         this.y = 200 + Math.random() * 150; // Zufällige Zahl zwischen 250 und 400
+         this.y = 200 + Math.random() * 150;
      }
 
 
      animation() {
-         setInterval(() => {
+         setStoppebleInterval(() => {
              this.playAnimation(level.salsaBottle);
          }, 50);
      }

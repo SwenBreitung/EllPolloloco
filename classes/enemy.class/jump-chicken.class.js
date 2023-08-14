@@ -3,7 +3,7 @@ class JumpChicken extends MovableObjekt {
     width = 30;
     heigth = 50;
     x;
-    speed = 0.8 + Math.random() * 0.25;
+    speed = 2 + Math.random() * 0.25;
     isSpotted = false
     originalX = 1700;
     maxMoveDistance = 500;
@@ -28,10 +28,11 @@ class JumpChicken extends MovableObjekt {
 
 
     moving() {
-        this.moveLeft(500, this.speed);
+
         setInterval(() => {
+            this.moveLeft(200, this.speed);
             this.jumpingLeft();
-        }, 50);
+        }, 300);
     }
 
 
@@ -57,9 +58,9 @@ class JumpChicken extends MovableObjekt {
     jumpingLeft() {
         if (this.isSpotted) {
             this.jumping();
+            this.speed = 2 + Math.random() * 0.25;
             this.moveLeft(50, this.speed + 2);
             this.isSpotted = false;
-            this.speed = 0.8 + Math.random() * 0.25;
         }
     }
 
@@ -71,9 +72,7 @@ class JumpChicken extends MovableObjekt {
     }
 
     animation() {
-        setInterval(() => {
-            this.playAnimation(this.IMG_WALKIN);
-        }, 50);
+        setInterval(() => this.playAnimation(this.IMG_WALKIN), 50);
     }
 
 

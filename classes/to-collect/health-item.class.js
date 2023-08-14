@@ -1,5 +1,5 @@
 class HealthItem extends MovableObjekt {
-    y = 200;
+    y = 0;
     width = 50;
     heigth = 50;
     x = 50;
@@ -8,12 +8,12 @@ class HealthItem extends MovableObjekt {
     constructor(imgPath, x) {
         super().loadImg(imgPath);
         this.x = x + Math.random() * 250;;
-        this.y = 100; // Zufällige Zahl zwischen 250 und 400
+        this.y = 100;
         this.spawn();
     }
 
     spawn() {
-        this.speedY = 150;
+        this.speedY = 280;
         this.applyGravaty();
     }
 

@@ -21,7 +21,7 @@
     <script src="./classes/enemy.class/infinite-chicken.class.js"></script>
     <script src="./classes/enemy.class/jump-chicken.class.js"></script>
 
-    <script src="./classes/endboss.class.js"></script>
+    <script src="classes/enemy.class/endboss.class.js"></script>
 
     <script src="./classes/clouds.class/cloud.class.js"></script>
     <script src="./classes/clouds.class/mid-cloud.class.js"></script>
@@ -45,13 +45,46 @@
 
 </head>
 
-<body onload="init()">
-
-    <h1>Ell Ploloco</h1>
-
+<body id="body" class="column" onload="init()">
+    <h1 id="h1" class="">El Polloco</h1>
     <div class="canvas-container">
         <canvas id="canvas" width="720" height="480"></canvas>
+        <div id="iconbar" class="iconbar ">
+            <div class="icon-top-menu ">
+                <button class="btn-menu" id="menu-btn">Menu</button>
+
+            </div>
+            <div class="iconbar-bottom-menu ">
+                <a class="icon-left" href="#">
+                    <img id="btnLeft" src="img/icons/arrows_next_right_last_forward_arrow.svg" onclick="" alt="move arrow left icon">
+                    <img id="btnThrow" src="img/icons/bottle.png" onclick="" alt="bottle icon">
+                </a>
+                <a class="icon-right" href="#">
+                    <img id="btnJump" src="img/icons/jump.png" alt="jump icon">
+                    <img id="btnRight" src="img/icons/arrows_next_right_last_forward_arrow.svg" onclick="" alt="move arrow right icon">
+
+                </a>
+            </div>
+
+
+        </div>
+
+        <div id="start-screen">
+            <div id="menu-text">
+                <div onclick="startGame() " class="button " id="start-container ">
+                    <div id="start " class="menu-font ">Start</div>
+                </div>
+                <div onclick="openMenu() " class="button " id=" ">
+                    <div id="menu " class="menu-font ">Menu</div>
+                </div>
+            </div>
+        </div>
+        <div id="end-screen" class="d-none"></div>
+        <div id="menu-screen" class="d-none" onclick="closeMenu(event)">
+
+        </div>
     </div>
+
 </body>
 
 </html>

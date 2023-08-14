@@ -4,8 +4,6 @@
          new Chicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'),
          new Chicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'),
          new Chicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'),
-
-
      ], [
          new Cloud(100),
          new Cloud(200),
@@ -117,7 +115,6 @@
      ], [
          new InfiniteChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'),
      ], [
-
          new MidCloud(60),
          new MidCloud(230),
          new MidCloud(460),
@@ -132,7 +129,6 @@
          new MidCloud(2630),
          new MidCloud(2860),
          new MidCloud(3090)
-
      ], [
          new HighCloud(0),
          new HighCloud(150),
@@ -146,6 +142,5 @@
          new HighCloud(1350),
          new HighCloud(1500),
          new HighCloud(1650),
-
      ],
  );

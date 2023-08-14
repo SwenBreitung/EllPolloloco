@@ -10,13 +10,28 @@ class Level {
     infiniteChickens;
     midClouds;
     lvl_end_x = 719 * 3;
-    constructor(enemies, clouds, backgroundObjekts, salsaBottle, coin, endboss, healthItem, jumpChickens, infiniteChickens, midClouds, highClouds) {
+
+
+    constructor(
+        enemies,
+        clouds,
+        backgroundObjekts,
+        salsaBottle,
+        coin,
+        endboss,
+        healthItem,
+        jumpChickens,
+        infiniteChickens,
+        midClouds,
+        highClouds
+    )
+
+    {
         this.enemies = enemies;
         this.clouds = clouds;
         this.backgroundObjekts = backgroundObjekts;
         this.salsaBottle = salsaBottle;
         this.coin = coin;
-
         this.endboss = endboss;
         this.healthItem = healthItem;
         this.jumpChickens = jumpChickens
@@ -25,21 +40,5 @@ class Level {
         this.highClouds = highClouds;
     }
 
-
-    getAllVariables() {
-        return [
-            enemies,
-            clouds,
-            backgroundObjects,
-            salsaBottle,
-            coin,
-            endboss,
-            healthItem,
-            jumpChickens,
-            infiniteChickens,
-            midClouds,
-            highClouds
-        ];
-    }
 
 }
