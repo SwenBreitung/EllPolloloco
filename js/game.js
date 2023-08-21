@@ -9,7 +9,7 @@ let intervalIds = [];
 let intervalTime = [];
 let i = 1
 let fullScreen = false;
-
+let soundOnOff = false;
 /**
  * Initializes the application or game by adding event listeners and bindings.
  */
@@ -125,10 +125,11 @@ function isWin(world) {
  * @param {object} world - The game world object containing information about the game state.
  */
 function isLose(world) {
-    if (world.character.hitpoints == 0) {
+    if (world.hitpoints == 0) {
+        console.log(world);
         clearAllIntervals();
         loadEndScreen('<img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">');
-        world.character.soundPlayCharacter(world.configAUDIO.losing_audio, 0.4, 0);
+        world.soundPlayCharacter(world.world.configAUDIO.losing_audio, 0.4, 0);
     }
 }
 
@@ -175,13 +176,11 @@ function bindBtnsPressEventsTouch() {
 
     //---------------------
 
-    document.getElementById('btnJump').addEventListener('touchstart', (event) => {
-        event.preventDefault();
+    document.getElementById('btnJump').addEventListener('touchstart', () => {
         keyboard.SPACE = true;
     });
 
-    document.getElementById('btnJump').addEventListener('touchend', (event) => {
-        event.preventDefault();
+    document.getElementById('btnJump').addEventListener('touchend', () => {
         keyboard.SPACE = false;
     });
 

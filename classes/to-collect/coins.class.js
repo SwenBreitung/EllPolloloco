@@ -1,3 +1,7 @@
+/**
+ * this class is the coin class
+ * @class
+ */
 class Coin extends MovableObjekt {
     y = 200;
     width = 100;

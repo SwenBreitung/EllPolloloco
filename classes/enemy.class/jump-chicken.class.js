@@ -1,3 +1,7 @@
+/**
+ * this class is the enemy little jumping chicken 
+ * @class
+ */
 class JumpChicken extends MovableObjekt {
     y = 390;
     width = 30;

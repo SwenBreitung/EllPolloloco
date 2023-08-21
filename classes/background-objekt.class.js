@@ -1,3 +1,7 @@
+/**
+ * this class is the background
+ * @class
+ */
 class backgroundObjekt extends MovableObjekt {
     y = 300;
     height = 480;

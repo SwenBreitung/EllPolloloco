@@ -1,3 +1,7 @@
+ /**
+  * this class is the salsa bottle class
+  * @class
+  */
  class SalsaBottle extends MovableObjekt {
      y = 200;
      width = 100;

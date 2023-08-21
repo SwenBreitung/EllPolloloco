@@ -1,3 +1,7 @@
+/**
+ * this class is the character coin statusbar
+ * @class
+ */
 class StatusBarCoin extends DrawableObjekt {
     img_statusBar_coin = [
         'img/7_statusbars/1_statusbar/1_statusbar_coin/blue/0.png',

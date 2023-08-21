@@ -1,3 +1,7 @@
+/**
+ * this class is the character hp statusbar
+ * @class
+ */
 class StatusBar extends DrawableObjekt {
     img_live_green = [
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/0.png',

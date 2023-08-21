@@ -1,3 +1,7 @@
+/**
+ * this class is the enemy chicken
+ * @class
+ */
 class Chicken extends MovableObjekt {
     y = 390;
     width = 50;

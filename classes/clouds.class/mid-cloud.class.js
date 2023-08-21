@@ -1,3 +1,7 @@
+/**
+ * this class is the mid cloud
+ * @class
+ */
 class MidCloud extends MovableObjekt {
     y = 60;
     width = 200;

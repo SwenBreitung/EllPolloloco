@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>let canvas;
+let world;
+let keyboard = new Keyboard();
+let endboss = new Endboss();
+let configAUDIO = new ConfigAUDIO();
+let isMenuOpen = false;
+let isGameOpen = false;
+let intervalIds = [];
+let intervalTime = [];
+let i = 1
+let fullScreen = false;
+
+/**
+ * Initializes the application or game by adding event listeners and bindings.
+ */
+function init() {
+    document.addEventListener("keyup", openeMenuWithESC);
+    bindBtnsPressEventsTouch();
+}
+
+
+/**
+ * Loads controls information into a menu screen element on the web page.
+ * This function sets the inner HTML of the specified element to the content returned by the loadControlTemplate() function.
+ */
+function loadControls() {
+    let element = document.getElementById('menu-screen');
+    isMenuOpen = true;
+    element.innerHTML = loadControlTamplate();
+}
+
+
+/**
+ * Starts the game by hiding the start screen element, initializing the game world, and updating audio configuration.
+ */
+function startGame() {
+    let element = document.getElementById('start-screen');
+    element.classList.add('d-none');
+    canvas = document.getElementById('canvas')
+    world = new World(canvas, keyboard);
+    configAUDIO.isGameStart = true;
+}
+
+
+/**
+ * Closes the menu screen by adding and removing CSS classes.
+ */
+function closeMenu() {
+    document.getElementById('menu-screen').classList.add('d-none');
+    document.getElementById('menu-text').classList.remove('d-none');
+    isMenuOpen = false;
+}
+
+
+/**
+ * Opens the menu by adding and removing CSS classes and loading menu content.
+ */
+function openMenu() {
+    document.getElementById('menu-text').classList.add('d-none');
+    document.getElementById('menu-screen').classList.remove('d-none');
+    isMenuOpen = true;
+    let element = document.getElementById('menu-screen');
+    element.innerHTML = loadMenuTamplate();
+}
+
+
+/**
+ * Opens or closes the menu based on the state of the ESC key.
+ */
+function openeMenuWithESC() {
+    if (keyboard.ESC == true) {
+        if (!isMenuOpen) {
+            openMenu();
+        } else {
+            closeMenu();
+        }
+    }
+}
+
+
+/**
+ * Creates a custom interval using setInterval and stores interval IDs and times.
+ * 
+ * @param {function} fn - The function to be executed at each interval.
+ * @param {number} time - The time interval in milliseconds.
+ */
+function setStoppebleInterval(fn, time) {
+    let id = setInterval(fn, time);
+    intervalIds.push(id);
+    intervalTime.push(time);
+}
+
+
+/**
+ * Resumes previously paused intervals using stored interval IDs and times.
+ */
+function resumeGame() {
+    for (let i = 0; i &lt; intervalIds.length; i++) {
+        intervalIds[i] = setInterval(() => {}, intervalTime[i]);
+    }
+}
+
+
+/**
+ * Checks if the player has won the game by defeating the end boss.
+ * If the boss's hitpoints reach zero, the function clears all intervals, loads the end screen,
+ * and plays a sound indicating a victory.
+ * 
+ * @param {object} world - The game world object containing information about the game state.
+ */
+function isWin(world) {
+    if (world.lvl.endboss[0].hitpoints == 0) {
+        clearAllIntervals();
+        loadEndScreen('&lt;img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">');
+        world.character.soundPlayCharacter(world.configAUDIO.win_audio, 0.4, 0);
+    }
+}
+
+
+/**
+ * Checks if the player has lost the game due to running out of hitpoints.
+ * If the character's hitpoints reach zero, the function clears all intervals,
+ * loads the end screen, and plays a sound indicating a loss.
+ * 
+ * @param {object} world - The game world object containing information about the game state.
+ */
+function isLose(world) {
+    if (world.hitpoints == 0) {
+        console.log(world);
+        clearAllIntervals();
+        loadEndScreen('&lt;img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">');
+        world.soundPlayCharacter(world.world.configAUDIO.losing_audio, 0.4, 0);
+    }
+}
+
+
+/**
+ * Loads and displays an end screen on the web page.
+ * 
+ * @param {string} img - The image HTML content to be displayed as the end screen.
+ */
+function loadEndScreen(img) {
+    const endScreen = document.getElementById('end-screen');
+    endScreen.classList.remove('d-none');
+    body.classList.remove('column');
+    h1.classList.add('d-none');
+    endScreen.innerHTML = img;
+}
+
+
+/**
+ * Binds touch events to specific buttons to simulate keyboard input for game controls.
+ */
+function bindBtnsPressEventsTouch() {
+    document.getElementById('btnLeft').addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        keyboard.LEFT = true;
+    });
+
+    document.getElementById('btnLeft').addEventListener('touchend', (event) => {
+        event.preventDefault();
+        keyboard.LEFT = false;
+    });
+
+    //--------------------
+
+    document.getElementById('btnRight').addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        keyboard.RIGHT = true;
+    });
+
+    document.getElementById('btnRight').addEventListener('touchend', (event) => {
+        event.preventDefault();
+        keyboard.RIGHT = false;
+    });
+
+    //---------------------
+
+    document.getElementById('btnJump').addEventListener('touchstart', () => {
+        keyboard.SPACE = true;
+    });
+
+    document.getElementById('btnJump').addEventListener('touchend', () => {
+        keyboard.SPACE = false;
+    });
+
+    //---------------------
+
+    document.getElementById('btnThrow').addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        keyboard.SHIFT = true;
+    });
+
+    document.getElementById('btnThrow').addEventListener('touchend', (event) => {
+        event.preventDefault();
+        keyboard.SHIFT = false;
+    });
+
+    // ---------------------
+
+    document.getElementById('menu-btn').addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        keyboard.ESC = true;
+        openeMenuWithESC();
+    });
+
+    document.getElementById('menu-btn').addEventListener('touchend', (event) => {
+        event.preventDefault();
+        keyboard.ESC = false;
+    });
+}
+
+//---------Fullscreen------------
+
+/**
+ * Toggles between entering and exiting fullscreen mode for the web page.
+ */
+function isFullscreen() {
+    if (fullScreen) {
+        exitFullscreen();
+        fullScreen = false;
+    } else {
+        enterFullscreen();
+        fullScreen = true;
+    }
+}
+
+
+/**
+ * Attempts to enter fullscreen mode for the web page using browser-specific methods.
+ */
+function enterFullscreen() {
+    var element = document.documentElement;
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+
+
+/**
+ * Attempts to exit fullscreen mode for the web page using browser-specific methods.
+ */
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+}
+
+
+/**
+ * Attempts to clear all intervals that have been set using the setInterval() function.
+ * Note: This approach is not reliable and may not work as intended.
+ */
+function clearAllIntervals() {
+    for (let i = 1; i &lt; 9999; i++) window.clearInterval(i);
+}
+//==============Fullscreen END===========
+
+
+//ARROW and WASD steering
+window.addEventListener("keydown", (e) => {
+    if (e.keyCode === 39 || e.keyCode == 68) {
+        keyboard.RIGHT = true;
+    } else if (e.keyCode == 37 || e.keyCode === 65) {
+        keyboard.LEFT = true;
+    } else if (e.keyCode == 38 || e.keyCode === 87) {
+        keyboard.TOP = true;
+    } else if (e.keyCode == 40 || e.keyCode === 83) {
+        keyboard.DOWN = true;
+    } else if (e.keyCode == 32) {
+        keyboard.SPACE = true;
+    } else if (e.keyCode == 16) {
+        keyboard.SHIFT = true;
+    } else if (e.keyCode == 27) {
+        keyboard.ESC = true;
+    }
+    console.log()
+});
+
+
+window.addEventListener("keyup", (e) => {
+    if (e.keyCode === 39 || e.keyCode === 68) {
+        keyboard.RIGHT = false;
+    } else if (e.keyCode == 37 || e.keyCode === 65) {
+        keyboard.LEFT = false;
+    } else if (e.keyCode == 38 || e.keyCode === 87) {
+        keyboard.TOP = false;
+    } else if (e.keyCode == 40 || e.keyCode === 83) {
+        keyboard.DOWN = false;
+    } else if (e.keyCode == 32) {
+        keyboard.SPACE = false;
+    } else if (e.keyCode == 16) {
+        keyboard.SHIFT = false;
+    } else if (e.keyCode == 27) {
+        keyboard.ESC = false;
+    }
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#bindBtnsPressEventsTouch">bindBtnsPressEventsTouch</a></li><li><a href="global.html#clearAllIntervals">clearAllIntervals</a></li><li><a href="global.html#closeMenu">closeMenu</a></li><li><a href="global.html#enterFullscreen">enterFullscreen</a></li><li><a href="global.html#exitFullscreen">exitFullscreen</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#isFullscreen">isFullscreen</a></li><li><a href="global.html#isLose">isLose</a></li><li><a href="global.html#isWin">isWin</a></li><li><a href="global.html#loadControls">loadControls</a></li><li><a href="global.html#loadEndScreen">loadEndScreen</a></li><li><a href="global.html#openMenu">openMenu</a></li><li><a href="global.html#openeMenuWithESC">openeMenuWithESC</a></li><li><a href="global.html#resumeGame">resumeGame</a></li><li><a href="global.html#setStoppebleInterval">setStoppebleInterval</a></li><li><a href="global.html#startGame">startGame</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Aug 22 2023 01:01:46 GMT+0200 (Mitteleuropäische Sommerzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

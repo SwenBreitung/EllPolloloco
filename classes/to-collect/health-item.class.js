@@ -1,3 +1,7 @@
+/**
+ * this class is the health item class
+ * @class
+ */
 class HealthItem extends MovableObjekt {
     y = 0;
     width = 50;

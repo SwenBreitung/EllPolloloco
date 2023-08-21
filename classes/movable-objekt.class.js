@@ -1,3 +1,7 @@
+/**
+ * this class is the health item class
+ * @class
+ */
 class MovableObjekt extends DrawableObjekt {
 
     speedY = 0;

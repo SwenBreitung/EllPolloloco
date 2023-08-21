@@ -1,3 +1,7 @@
+/**
+ * this class is the character energy statusbar
+ * @class
+ */
 class StatusBarEnergyBottle extends DrawableObjekt {
     img_engery_bottle_orange = [
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/0.png',

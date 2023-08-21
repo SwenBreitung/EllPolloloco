@@ -1,3 +1,7 @@
+/**
+ * this class is the boss Chicken
+ * @class
+ */
 class Endboss extends MovableObjekt {
     y = 255;
     x = 1700;

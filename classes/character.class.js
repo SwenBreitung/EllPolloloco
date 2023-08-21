@@ -1,3 +1,7 @@
+/**
+ * this class is the health item class
+ * @class
+ */
 class Character extends MovableObjekt {
 
     y = 80;
@@ -237,7 +241,6 @@ class Character extends MovableObjekt {
     idleAnimation() {
         if (this.isCharacterSleepShort()) {
             this.playAnimation(this.IMG_IDLE);
-
         } else if (this.isCharacterSleepLong()) {
             this.playAnimation(this.IMG_IDLE_LONG);
         }

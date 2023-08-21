@@ -1,3 +1,7 @@
+/**
+ * this class is the enemy spawn chicken 
+ * @class
+ */
 class SpawnChicken extends MovableObjekt {
     y = 390;
     width = 30;

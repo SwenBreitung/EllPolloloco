@@ -1,3 +1,7 @@
+/**
+ * this class is the high cloud
+ * @class
+ */
 class HighCloud extends MovableObjekt {
     y = -30;
     width = 400;

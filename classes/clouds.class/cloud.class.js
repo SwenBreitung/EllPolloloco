@@ -1,3 +1,7 @@
+/**
+ * this class is the low cloud
+ * @class
+ */
 class Cloud extends MovableObjekt {
     y = 80;
     width = 100;

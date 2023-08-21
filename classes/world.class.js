@@ -1,3 +1,7 @@
+/**
+ * this class is the health item class
+ * @class
+ */
 class World {
 
     canvas;
@@ -178,13 +182,13 @@ class World {
      */
     run() {
         setInterval(() => {
-            this.checkThrowObject();
             this.playBackgroundMusic();
             isWin(this);
             isLose(this);
         }, 500);
 
         setInterval(() => {
+            this.checkThrowObject();
             this.checkColision();
         }, 50);
         this.handleEnemyCollisions();

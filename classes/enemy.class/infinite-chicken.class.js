@@ -1,3 +1,7 @@
+/**
+ * this class is the enemy infinite chicken 
+ * @class
+ */
 class InfiniteChicken extends MovableObjekt {
     y = 390;
     width = 50;
