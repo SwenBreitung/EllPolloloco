@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,11 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/objekte/mexico-g1b46101a5_1280.png" type="image/x-icon">
 
+    <script src="js/tamplate.js"></script>
+    <script src="js/colliding.js"></script>
+    <script src="classes/configAUDIO.js"></script>
 
     <script src="./classes/world.class.js"></script>
     <script src="./classes/keyboard.class.js"></script>
@@ -42,11 +46,19 @@
     <script src="./classes/levels/level1.js"></script>
     <script src="./js/game.js"></script>
 
+    <style>
+        @font-face {
+            font-family: 'blackOpsOne-bold';
+            src: url('founds/blackOpsOne-Regular.ttf');
+            font-weight: bold;
+            font-style: italic;
+        }
+    </style>
 
 </head>
 
 <body id="body" class="column" onload="init()">
-    <h1 id="h1" class="">El Polloco</h1>
+    <h1 id="h1" class="">El Pollo Loco</h1>
     <div class="canvas-container">
         <canvas id="canvas" width="720" height="480"></canvas>
         <div id="iconbar" class="iconbar ">
@@ -65,10 +77,7 @@
 
                 </a>
             </div>
-
-
         </div>
-
         <div id="start-screen">
             <div id="menu-text">
                 <div onclick="startGame() " class="button " id="start-container ">
@@ -81,7 +90,6 @@
         </div>
         <div id="end-screen" class="d-none"></div>
         <div id="menu-screen" class="d-none" onclick="closeMenu(event)">
-
         </div>
     </div>
 

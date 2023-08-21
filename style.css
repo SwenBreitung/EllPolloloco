@@ -8,10 +8,18 @@
     justify-content: center;
     height: 100vh;
     margin: 0;
+    font-family: 'blackOpsOne-bold', sans-serif;
 }
 
 .column {
     flex-direction: column;
+}
+
+h1 {
+    font-size: 36px;
+    text-shadow: 4px 4px 6px black;
+    margin: 0;
+    padding: 0;
 }
 
 .d-none {
@@ -236,6 +244,9 @@ h2 {
         display: flex;
         width: 100vw;
     }
+    #menu-screen {
+        width: 100vw;
+    }
 }
 
 @media only screen and (max-height:480px) {
@@ -249,5 +260,8 @@ h2 {
     .iconbar {
         display: flex;
         height: 100vh;
+    }
+    #menu-screen {
+        width: 100vw;
     }
 }

@@ -39,6 +39,4 @@ class Level {
         this.midClouds = midClouds;
         this.highClouds = highClouds;
     }
-
-
 }

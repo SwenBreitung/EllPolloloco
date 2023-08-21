@@ -1,17 +1,24 @@
 class World {
+
     canvas;
     ctx;
     character = new Character('img/2_character_pepe/1_idle/idle/I-1.png');
+    configAUDIO = new ConfigAUDIO();
     keyboard;
     camera_x = 0;
     lvl = level1;
     statusBar = new StatusBar();
     statusBarEnergyBottle = new StatusBarEnergyBottle();
     statusBarCoin = new StatusBarCoin();
-    throwableObjekt = [new ThrowableObjekt()];
+    throwableObjects = [new ThrowableObject()];
     spawnChickens = [];
-    justTrewBottle = false;
 
+    /**
+     * This function initializes the World class.
+     * 
+     * @param {CanvasRenderingContext2D} canvas - The canvas context.
+     * @param {class} keyboard - The keyboard class.
+     */
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d')
         this.canvas = canvas;
@@ -21,43 +28,65 @@ class World {
         this.run();
     }
 
+
+    /**
+     * This function starts the different background music tracks.
+     */
+    playBackgroundMusic() {
+        if (!this.lvl.endboss[0].isSpotted && configAUDIO.music && configAUDIO.isGameStart) {
+            soundStop(configAUDIO.start_backgroundSound);
+            soundStop(this.configAUDIO.BACKGROUND_AUDIO_FIGHT);
+            this.character.soundPlayCharacter(configAUDIO.BACKGROUND_AUDIO_GAME, 0.4, 0)
+        } else if (this.lvl.endboss[0].isSpotted && configAUDIO.music && configAUDIO.isGameStart) {
+            soundStop(configAUDIO.BACKGROUND_AUDIO_GAME);
+            this.character.soundPlayCharacter(this.configAUDIO.BACKGROUND_AUDIO_FIGHT, 0.4, 0)
+        }
+    }
+
+
     //---------------------Desing the Wolrd---------------------------------
 
+    /**
+     * This function ensures that 'this' inherits all information from the Character object.
+     */
     setWorld() {
         this.character.world = this;
     }
 
 
+    /**
+     * This function clears the canvas and repaints the canvas.
+     */
     draw() {
-        //löscht die alten Bilder so wie z.b. beim pokedex die cards wenn man sie neu lädt
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // generiert die map 
         this.ctx.translate(this.camera_x, 0)
-            //Dies ist für die Animation, bzw fürs neuladen der Bilder (FPS)
         let self = this
         requestAnimationFrame(function() {
             self.draw();
         });
-        //Läd die elemente der Map
         this.addToMapForEach(this.lvl.backgroundObjekts);
-        //Läd die elemente der objekte 
         this.addToMapForEachAllObjekts();
-        //beeinflusst die kamera und sorgt dafür das diese auf den char bleibt
         this.ctx.translate(-this.camera_x, 0)
     }
 
 
+    /**
+     * This function contains all arrays of objects to be painted.
+     */
     addToMapForEachAllObjekts() {
         this.addToMapForEachLoadClouds();
         this.addToMapForEachLoadStatusBars();
-        this.addToMap(this.character);
-        this.addToMapForEachThrowableObjekt()
+        this.addToMapForEachThrowableObject();
         this.addToMapForEachObjekts();
+        this.addToMap(this.character);
         this.addToMapForEachEnemys();
         this.addToMapForEach(this.lvl.endboss);
     }
 
 
+    /**
+     * This function contains all arrays of clouds to be painted.
+     */
     addToMapForEachLoadClouds() {
         this.addToMapForEach(this.lvl.clouds);
         this.addToMapForEach(this.lvl.midClouds);
@@ -65,6 +94,9 @@ class World {
     }
 
 
+    /**
+     * This function contains all stat bars to be painted.
+     */
     addToMapForEachLoadStatusBars() {
         this.addToMapForStaticObjekt(this.statusBar)
         this.addToMapForStaticObjekt(this.statusBarEnergyBottle)
@@ -72,13 +104,17 @@ class World {
     }
 
 
-    addToMapForEachThrowableObjekt() {
-        if (this.keyboard.SHIFT) {
-            this.addToMapForEach(this.throwableObjekt);
-        }
+    /**
+     * This function paints all throwable objects.
+     */
+    addToMapForEachThrowableObject() {
+        this.addToMapForEach(this.throwableObjects);
     }
 
 
+    /**
+     * This function paints all collectible items.
+     */
     addToMapForEachObjekts() {
         this.addToMapForEach(this.lvl.coin);
         this.addToMapForEach(this.lvl.healthItem);
@@ -86,6 +122,9 @@ class World {
     }
 
 
+    /**
+     * This function paints all enemies.
+     */
     addToMapForEachEnemys() {
         this.addToMapForEach(this.lvl.enemies);
         this.addToMapForEach(this.spawnChickens);
@@ -94,18 +133,27 @@ class World {
     }
 
 
+    /**
+     * This function directly paints the images.
+     * @param {string} e - Individual images from the arrays.
+     */
     addToMap(e) {
         if (e.otherDiscption) {
             this.flippImg(e);
         }
         e.draw(this.ctx);
-        e.drawBorder(this.ctx);
+        // e.drawBorder(this.ctx);
         if (e.otherDiscption) {
             this.flippImgBack(e);
         }
     }
 
 
+    /**
+     * This function splits all arrays into individual images.
+     * 
+     * @param {string} arry - Arrays of animation sequences.
+     */
     addToMapForEach(arry) {
         arry.forEach(e => {
             this.addToMap(e)
@@ -113,6 +161,10 @@ class World {
     }
 
 
+    /**
+     * This function generates static objects.
+     * @param {*} obj - These are the images of the static objects.
+     */
     addToMapForStaticObjekt(obj) {
         this.ctx.translate(-this.camera_x, 0)
         this.addToMap(obj);
@@ -121,12 +173,18 @@ class World {
 
     //=========================Desing the Wolrd END=======================================
 
+    /**
+     * This lists all relevant functions.
+     */
     run() {
-        setStoppebleInterval(() => {
+        setInterval(() => {
             this.checkThrowObject();
+            this.playBackgroundMusic();
+            isWin(this);
+            isLose(this);
         }, 500);
 
-        setStoppebleInterval(() => {
+        setInterval(() => {
             this.checkColision();
         }, 50);
         this.handleEnemyCollisions();
@@ -134,47 +192,65 @@ class World {
     }
 
 
-    spottingEnemys() {
-        setStoppebleInterval(() => {
-            this.isCharacterSpottedByBoss();
-            this.isCharacterSpottedByJumpingChicken();
-        }, 500);
-    }
-
-
+    /**
+     * Checks if a bottle can be thrown based on key inputs and energy state.
+     * Conditions: Shift key pressed, bottle energy >= 20, no previous bottle thrown.
+     * If conditions are met, a bottle is created, energy is deducted, status is updated,
+     * and a throw cooldown of 1 second is activated.
+     */
     checkThrowObject() {
-        if (this.keyboard.SHIFT && this.character.bottleEnergy >= 20 && !this.justTrewBottle) {
+        if (this.keyboard.SHIFT && this.character.bottleEnergy >= 20 && !this.throwableObjects.justThrewBottle) {
             this.character.bottleEngeryNegativCalc();
             this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
-            let bottle = new ThrowableObjekt(this.character.x, this.character.y);
-            this.throwableObjekt.push(bottle);
-
-            this.justTrewBottle = true;
+            let bottle = new ThrowableObject(this.character.x, this.character.y);
+            this.throwableObjects.push(bottle);
+            this.throwableObjects.justThrewBottle = true;
             setTimeout(() => {
-                this.justTrewBottle = false;
+                this.throwableObjects.justThrewBottle = false;
             }, 1000)
         }
     }
 
 
-    isCharacterSpottedByJumpingChicken() {
-
-        this.lvl.jumpChickens.forEach((jumpChicken, i) => {
-            this.character.jumpingChickenSpotCharacter(jumpChicken, i);
-        });
-
+    /**
+     * This function lists the enemies that can detect the character.
+     */
+    spottingEnemys() {
+        setInterval(() => {
+            this.isCharacterSpottedByEnemy(this.lvl.endboss);
+            this.isCharacterSpottedByEnemy(this.lvl.jumpChickens);
+        }, 500);
     }
 
 
-    isCharacterSpottedByBoss() {
-
-        this.lvl.endboss.forEach((endboss, i) => {
-            this.character.bossSpotCharacter(endboss, i);
+    /**
+     * This function checks if enemies have spotted the character.
+     * 
+     * @param {Array} enemy - All enemies equipped with a spotting function.
+     */
+    isCharacterSpottedByEnemy(enemys) {
+        enemys.forEach((enemy, i) => {
+            this.character.enemySpotCharacter(enemy, i);
         });
-
     }
 
 
+    /**
+     * Handles collisions with foes and enemies.
+     * This method handles damage calculation to the player character,
+     * eliminating enemies, and reacting to collisions with a boss.
+     */
+    handleEnemyCollisions() {
+        this.dmgFromEnemys();
+        this.killEnemy();
+        this.handleCollisionWithEndboss();
+    }
+
+
+    /**
+     * Checks if the character collides with the end boss.
+     * Additionally, it calculates the amount of HP to deduct from the character upon collision.
+     */
     handleCollisionWithEndboss() {
         setStoppebleInterval(() => {
             this.lvl.endboss.forEach((endboss) => {
@@ -187,13 +263,9 @@ class World {
     }
 
 
-    handleEnemyCollisions() {
-        this.dmgFromEnemys();
-        this.killEnemy();
-        this.handleCollisionWithEndboss();
-    }
-
-
+    /**
+     * This function checks which enemies collide with the character at a setInterval of 50.
+     */
     killEnemy() {
         setStoppebleInterval(() => {
             this.lvl.enemies.forEach((enemy, i) => this.killWithCollidingEnemy(enemy, i, this.lvl.enemies));
@@ -202,13 +274,27 @@ class World {
         }, 50);
     }
 
-    killWithCollidingEnemy(infiniteChicken, i, arry) {
-        if (this.character.isColliding(infiniteChicken) && this.character.isAboveGround()) {
+
+    /**
+     * Removes an element from an array (such as enemies) based on collision and position.
+     * If the player character collides with an element from the array and is above the ground,
+     * the element is removed from the array. Suitable for collisions with enemies.
+     * 
+     * @param {Array} enemys - The array containing the elements (e.g., enemies).
+     * @param {number} i - The position of the element in the array used for collision calculation.
+     * @param {Array} arry - The array from which the element should be removed.
+     */
+    killWithCollidingEnemy(enemys, i, arry) {
+        if (this.character.isColliding(enemys) && this.character.isAboveGround() && this.character.y - this.character.last_y > 0) {
+            soundPlay(configAUDIO.chicken_audio, 0.4, 1);
             arry.splice(i, 1);
         }
     }
 
 
+    /**
+     * This function calculates if a collision with damage occurs to the character.
+     */
     dmgFromEnemys() {
         setStoppebleInterval(() => {
             this.lvl.enemies.forEach((enemy) => this.dmgFromEnemy(enemy));
@@ -219,6 +305,11 @@ class World {
     }
 
 
+    /**
+     * This function calculates if a collision has occurred.
+     * Additionally, it calculates the damage from the collision and deducts hit points from the character.
+     * @param {string} enemy - This is the individual enemy object.
+     */
     dmgFromEnemy(enemy) {
         if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
             this.character.dmgCollisionCalc();
@@ -227,102 +318,80 @@ class World {
     }
 
 
+    /**
+     * This function checks for collisions between the throwable object and other objects as well as the ground.
+     */
     checkColision() {
-        this.checkThrowableObjectEnemysCollisions()
-        this.checkCharacterObjectsCollisions();
+        this.checkThrowableObjectEnemysCollisions(this)
+        this.checkCharacterObjectsCollisions(this);
     }
 
 
+    /**
+     * This function checks if the bottle collides with the main objects.
+     */
     checkThrowableObjectEnemysCollisions() {
-        this.checkThrowableObjectEnemyCollisions();
-        this.checkThrowableObjectEndbossCollisions();
+        checkThrowableObjectEnemyCollisions(this);
+        checkThrowableObjectEndbossCollisions(this);
+        checkThrowableObjecGround(this);
     }
 
 
+    /**
+     * This function checks if the character collides with the static positive objects.
+     */
     checkCharacterObjectsCollisions() {
-        this.checkCharacterCoinCollisions();
-        this.checkCharacterHealthItemCollisions();
-        this.checkCharacterSalsaBottleCollisions();
+        checkCharacterCoinCollisions(this);
+        checkCharacterHealthItemCollisions(this);
+        checkCharacterSalsaBottleCollisions(this);
     }
 
 
-    checkCharacterSalsaBottleCollisions(mo) {
-        this.lvl.salsaBottle.forEach((salsaBottle, i) => {
-            if (this.character.isColliding(salsaBottle) && this.max100EnergyBottle()) {
-                this.character.bottleEngeryPositivCalc();
-                this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
-                this.lvl.salsaBottle.splice(i, 1);
-            }
-        });
+    /**
+     * This function splits the Throwable Object.
+     * 
+     * @param {number} i - The position of the array for splicing the object.
+     */
+    spliceThrowableObject(i) {
+        const currentThrowableObject = this.throwableObjects;
+        setTimeout(() => {
+            currentThrowableObject.splice(i, 1);
+            this.ThrowableObjekt = false;
+        }, 100);
     }
 
 
-    checkCharacterHealthItemCollisions() {
-        this.lvl.healthItem.forEach((healthItem, i) => {
-            if (this.character.isColliding(healthItem) && this.maxHitpoints()) {
-                this.statusBarCoin.setPercentet(this.character.hitpoints);
-                this.lvl.healthItem.splice(i, 1);
-                this.character.hitpointsPositivCalc();
-                this.statusBar.setPercentet(this.character.hitpoints);
-            }
-        });
-    }
-
-
-    checkCharacterCoinCollisions() {
-        this.lvl.coin.forEach((coin, i) => {
-            if (this.character.isColliding(coin) && this.max100EnergyCoins()) {
-                this.statusBarCoin.setPercentet(this.character.coins);
-                this.lvl.coin.splice(i, 1);
-                this.character.coinsPositivCalc();
-                this.statusBarCoin.setPercentet(this.character.coins);
-            }
-        });
-    }
-
-
-    checkThrowableObjectEndbossCollisions() {
-        this.throwableObjekt.forEach((throwableObjekt, i) => {
-            this.lvl.endboss.forEach((endboss, j) => {
-                if (throwableObjekt.isColliding(endboss)) {
-                    this.lvl.endboss[j].dmgCollisionCalc();
-                    this.throwableObjekt[i].collisionBottle = true;
-                    this.throwableObjekt.splice(i, 1);
-                    setTimeout(() => {
-                        this.ThrowableObjekt = false;
-                    }, 500)
-                }
-            })
-        });
-    }
-
-
-    checkThrowableObjectEnemyCollisions() {
-        this.throwableObjekt.forEach((throwableObjekt, i) => {
-            this.lvl.enemies.forEach((enemy) => {
-                if (throwableObjekt.isColliding(enemy)) {
-                    this.throwableObjekt[i].collisionBottle = true;
-                    setTimeout(() => {
-                        this.throwableObjekt.splice(i, 1);
-                        this.ThrowableObjekt = false;
-                    }, 500)
-
-                }
-            })
-        });
-    }
-
-
+    /**
+     * Checks if the character's hit points are less than 100.
+     * Returns `true` if hit points are below 100, otherwise `false`.
+     * This indicates whether the character has room for an increase in hit points.
+     * 
+     * @returns {boolean} `true` if hit points are less than 100, otherwise `false`.
+     */
     maxHitpoints() {
         return this.character.hitpoints < 100;
     }
 
 
+    /**
+     * Checks if the character's coin count is less than 100.
+     * Returns `true` if coins are below 100, otherwise `false`.
+     * This indicates whether the character has room for an increase in coins.
+     * 
+     * @returns {boolean} `true` if coins are less than 100, otherwise `false`.
+     */
     max100EnergyCoins() {
         return this.character.coins < 100;
     }
 
 
+    /**
+     * Checks if the character's bottle energy is less than 100.
+     * Returns `true` if bottle energy is below 100, otherwise `false`.
+     * This indicates whether the character has room for an increase in bottle energy.
+     * 
+     * @returns {boolean} `true` if bottle energy is less than 100, otherwise `false`.
+     */
     max100EnergyBottle() {
         return this.character.bottleEnergy < 100;
     }
@@ -330,6 +399,11 @@ class World {
 
     //-----------------------------------Flipp the Objekt and return----------------------------
 
+    /**
+     * This function horizontally mirrors an image to create a rotation or animation in the opposite direction.
+     * 
+     * @param {Image} e - The image to be mirrored.
+     */
     flippImg(e) {
         this.ctx.save();
         this.ctx.translate(e.width, 0); // Setze den Ursprungspunkt auf die Mitte des Charakters
@@ -339,34 +413,15 @@ class World {
     }
 
 
+    /**
+     * Rotates the image back to its original orientation after mirroring.
+     * 
+     * @param {Image} e - The image to be rotated back.
+     */
     flippImgBack(e) {
         e.x = e.x * -1;
         this.ctx.restore();
     }
 
-    isLose() {
-        if (world.character.hitpoints === 0) {
-            resumeGame();
-            const endScreen = document.getElementById('end-screen');
-            const body = document.getElementById('body');
-            const h1 = document.getElementById('h1');
-            endScreen.innerHTML = '<img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">';
-            endScreen.classList.remove('d-none');
-            body.classList.remove('column');
-            h1.classList.add('d-none');
-
-        }
-    }
-
-    isWin() {
-            if (world.endboss.hitpoints === 0) {
-                clearAllIntervals();
-                const endScreen = document.getElementById('end-screen');
-                endScreen.innerHTML = '<img src="img/9_intro_outro_screens/game_over/you lost.png" alt="End Screen">';
-
-            }
-        }
-        //===================================Flipp the Objekt and return END================================
-
-
+    //===================================Flipp the Objekt and return END================================
 }

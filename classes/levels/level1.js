@@ -111,9 +111,12 @@
          new HealthItem('img/objekte/mexico-g1b46101a5_1280.png', 500),
          new HealthItem('img/objekte/mexico-g1b46101a5_1280.png', 800),
      ], [
-         new JumpChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'),
+         new JumpChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png', 1000),
+         new JumpChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png', 700),
+         new JumpChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png', 400),
      ], [
-         new InfiniteChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'),
+         new InfiniteChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png', 250),
+         new InfiniteChicken('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png', 750),
      ], [
          new MidCloud(60),
          new MidCloud(230),
