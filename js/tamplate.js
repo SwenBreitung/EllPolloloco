@@ -29,7 +29,12 @@ function loadControlTamplate() {
 function loadMenuTamplate() {
     return /*html*/ `
     <div class="justify-center dirction-column" onclick="event.stopPropagation()">
-      <button id="menu-musik" onclick="musicOnOff()" class="buttons-menu justify-center ">music on/off</button>
+    <button id="menu-musik" onclick="musicOnOff()" class="buttons-menu justify-center ">
+       <div class="sound-icon" id="sound-icon"></div> 
+      <div>music on/off</div></button>
+     <button id="menu-musik" onclick="switchSoundIcon()" class="buttons-menu justify-center ">
+       <div class="sound-icon" id="sound-music-icon"></div> <div>sound on/off</div>
+    </button> 
       <button id="menu-fullscreen" onclick="isFullscreen()" class="buttons-menu justify-center ">Vollbild on/off</button>
       <button id="menu-Controls" onclick="loadControls()" class="buttons-menu justify-center ">Steuerung</button>
       </div>

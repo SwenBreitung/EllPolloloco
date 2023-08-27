@@ -11,6 +11,7 @@ class StatusBar extends DrawableObjekt {
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/80.png',
         'img/7_statusbars/1_statusbar/2_statusbar_health/green/100.png',
     ]
+
     percentet = 100;
     x = 0;
     y = 0;
@@ -36,7 +37,6 @@ class StatusBar extends DrawableObjekt {
         this.percentet = percentet
         let path = this.img_live_green[this.resolveStatusBarImageIndex()];
         this.img = this.imgCach[path];
-
     }
 
 

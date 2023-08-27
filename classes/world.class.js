@@ -45,6 +45,11 @@ class World {
             soundStop(configAUDIO.BACKGROUND_AUDIO_GAME);
             this.character.soundPlayCharacter(this.configAUDIO.BACKGROUND_AUDIO_FIGHT, 0.4, 0)
         }
+        if (!configAUDIO.music && configAUDIO.isGameStart) {
+            soundStop(this.configAUDIO.start_backgroundSound);
+            soundStop(this.configAUDIO.BACKGROUND_AUDIO_FIGHT);
+            soundStop(configAUDIO.BACKGROUND_AUDIO_GAME);
+        }
     }
 
 
@@ -105,6 +110,14 @@ class World {
         this.addToMapForStaticObjekt(this.statusBar)
         this.addToMapForStaticObjekt(this.statusBarEnergyBottle)
         this.addToMapForStaticObjekt(this.statusBarCoin)
+        this.addToMapTextCoinStatusbar(this.statusBarCoin)
+    }
+
+
+    addToMapTextCoinStatusbar(e) {
+        this.ctx.translate(-this.camera_x, 0)
+        e.drawText(this.ctx)
+        this.ctx.translate(this.camera_x, 0)
     }
 
 
@@ -167,7 +180,7 @@ class World {
 
     /**
      * This function generates static objects.
-     * @param {*} obj - These are the images of the static objects.
+     * @param {objekt} obj - These are the images of the static objects.
      */
     addToMapForStaticObjekt(obj) {
         this.ctx.translate(-this.camera_x, 0)
@@ -181,10 +194,11 @@ class World {
      * This lists all relevant functions.
      */
     run() {
+
         setInterval(() => {
             this.playBackgroundMusic();
-            isWin(this);
             isLose(this);
+            isWin(this);
         }, 500);
 
         setInterval(() => {
@@ -192,7 +206,7 @@ class World {
             this.checkColision();
         }, 50);
         this.handleEnemyCollisions();
-        this.spottingEnemys();
+        this.character.spottingEnemys();
     }
 
 
@@ -206,36 +220,14 @@ class World {
         if (this.keyboard.SHIFT && this.character.bottleEnergy >= 20 && !this.throwableObjects.justThrewBottle) {
             this.character.bottleEngeryNegativCalc();
             this.statusBarEnergyBottle.setPercentet(this.character.bottleEnergy);
-            let bottle = new ThrowableObject(this.character.x, this.character.y);
+            let throwright = this.character.throwToRigh;
+            let bottle = new ThrowableObject(this.character.x, this.character.y, throwright);
             this.throwableObjects.push(bottle);
             this.throwableObjects.justThrewBottle = true;
             setTimeout(() => {
                 this.throwableObjects.justThrewBottle = false;
             }, 1000)
         }
-    }
-
-
-    /**
-     * This function lists the enemies that can detect the character.
-     */
-    spottingEnemys() {
-        setInterval(() => {
-            this.isCharacterSpottedByEnemy(this.lvl.endboss);
-            this.isCharacterSpottedByEnemy(this.lvl.jumpChickens);
-        }, 500);
-    }
-
-
-    /**
-     * This function checks if enemies have spotted the character.
-     * 
-     * @param {Array} enemy - All enemies equipped with a spotting function.
-     */
-    isCharacterSpottedByEnemy(enemys) {
-        enemys.forEach((enemy, i) => {
-            this.character.enemySpotCharacter(enemy, i);
-        });
     }
 
 
@@ -259,7 +251,7 @@ class World {
         setStoppebleInterval(() => {
             this.lvl.endboss.forEach((endboss) => {
                 if (this.character.isColliding(endboss)) {
-                    this.character.dmgCollisionCalc();
+                    this.character.dmgCollisionCalc(80);
                     this.statusBar.setPercentet(this.character.hitpoints);
                 }
             });
@@ -316,7 +308,7 @@ class World {
      */
     dmgFromEnemy(enemy) {
         if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
-            this.character.dmgCollisionCalc();
+            this.character.dmgCollisionCalc(20);
             this.statusBar.setPercentet(this.character.hitpoints);
         }
     }
@@ -326,8 +318,8 @@ class World {
      * This function checks for collisions between the throwable object and other objects as well as the ground.
      */
     checkColision() {
-        this.checkThrowableObjectEnemysCollisions(this)
-        this.checkCharacterObjectsCollisions(this);
+        this.checkThrowableObjectEnemysCollisions()
+        this.checkCharacterObjectsCollisions();
     }
 
 
@@ -345,9 +337,9 @@ class World {
      * This function checks if the character collides with the static positive objects.
      */
     checkCharacterObjectsCollisions() {
-        checkCharacterCoinCollisions(this);
-        checkCharacterHealthItemCollisions(this);
-        checkCharacterSalsaBottleCollisions(this);
+        checkCharacterItemCollisions(this, this.lvl.coin, null, this.character.coinsPositivCalc.bind(this), configAUDIO.pic_up_item_audio, 0.5, 0.5, null);
+        checkCharacterItemCollisions(this, this.lvl.healthItem, this.maxHitpoints(), this.character.hitpointsPositivCalc.bind(this), configAUDIO.eating_health_item_audio, 0.5, 0.5, this.statusBar.setPercentet(world.character.hitpoints));
+        checkCharacterItemCollisions(this, this.lvl.salsaBottle, this.max100EnergyBottle(), this.character.bottleEngeryPositivCalc.bind(this.character), configAUDIO.drink_bottle_audio, 1, 0, this.statusBarEnergyBottle.setPercentet(world.character.bottleEnergy));
     }
 
 
@@ -410,9 +402,8 @@ class World {
      */
     flippImg(e) {
         this.ctx.save();
-        this.ctx.translate(e.width, 0); // Setze den Ursprungspunkt auf die Mitte des Charakters
-        this.ctx.scale(-1, 1); // Horizontal spiegeln
-        // Zeichne das gespiegelte Bild
+        this.ctx.translate(e.width, 0);
+        this.ctx.scale(-1, 1);
         e.x = e.x * -1;
     }
 

@@ -1,63 +1,22 @@
-// class Colliding {
-
 /**
- * Checks for collisions between the character and salsa bottles in the game world.
- * If a collision is detected and the character has less than 100 energy bottles, 
- * the character's bottle energy is increased, the energy bar status is updated, 
- * and the collided salsa bottle is removed from the level.
- * 
- * @param {object} world - The game world object containing level and character information.
+ * Checks collisions between the character and collectible objects in the array and performs actions.
+ *
+ * @param {object} world - The game world object.
+ * @param {array} arry - An array of collectible objects to check for collision.
+ * @param {boolean|null} energyfull - A value indicating whether energy is present.
+ * @param {function} calculator - A function to be called when the collision occurs.
+ * @param {string} audio - The audio path for sound playback.
+ * @param {number} sound - The volume for sound playback.
+ * @param {number} volume - The volume for sound playback.
+ * @param {boolean|null} energybar - A value indicating whether the energy bar should be used.
  */
-function checkCharacterSalsaBottleCollisions(world) {
-    world.lvl.salsaBottle.forEach((salsaBottle, i) => {
-        if (world.character.isColliding(salsaBottle) && world.max100EnergyBottle()) {
-            world.character.bottleEngeryPositivCalc();
-            soundPlay(configAUDIO.drink_bottle_audio, 1, 0)
-            world.statusBarEnergyBottle.setPercentet(world.character.bottleEnergy);
-            world.lvl.salsaBottle.splice(i, 1);
-
-        }
-    });
-}
-
-
-/**
- * Checks for collisions between the character and health items in the game world.
- * If a collision is detected and the character's hitpoints are not at the maximum,
- * the character's hitpoints are increased, the health bar status is updated,
- * and the collided health item is removed from the level.
- * 
- * @param {object} world - The game world object containing level and character information.
- */
-function checkCharacterHealthItemCollisions(world) {
-    world.lvl.healthItem.forEach((healthItem, i) => {
-        if (world.character.isColliding(healthItem) && world.maxHitpoints()) {
-            world.statusBarCoin.setPercentet(world.character.hitpoints);
-            world.lvl.healthItem.splice(i, 1);
-            world.character.hitpointsPositivCalc();
-            soundPlay(configAUDIO.eating_health_item_audio, 0.5, 0.5)
-            world.statusBar.setPercentet(world.character.hitpoints);
-        }
-    });
-}
-
-
-/**
- * Checks for collisions between the character and coins in the game world.
- * If a collision is detected and the character's coins are not at their maximum,
- * the character's coins are increased, the coin bar status is updated,
- * and the collided coin is removed from the level.
- * 
- * @param {object} world - The game world object containing level and character information.
- */
-function checkCharacterCoinCollisions(world) {
-    world.lvl.coin.forEach((coin, i) => {
-        if (world.character.isColliding(coin) && world.max100EnergyCoins()) {
-            world.statusBarCoin.setPercentet(world.character.coins);
-            world.lvl.coin.splice(i, 1);
-            world.character.coinsPositivCalc();
-            soundPlay(configAUDIO.pic_up_item_audio, 0.5, 0.5)
-            world.statusBarCoin.setPercentet(world.character.coins);
+function checkCharacterItemCollisions(world, arry, energyfull, calculator, audio, sound, volume, energybar) {
+    arry.forEach((item, i) => {
+        if (world.character.isColliding(item) && (energyfull || energyfull == null)) {
+            arry.splice(i, 1);
+            calculator();
+            soundPlay(audio, sound, volume);
+            energybar;
         }
     });
 }
@@ -76,7 +35,7 @@ function checkThrowableObjectEndbossCollisions(world) {
         world.lvl.endboss.forEach((endboss, j) => {
             if (throwableObject.isColliding(endboss) && !throwableObject.alreadyHit) {
                 throwableObject.alreadyHit = true;
-                world.lvl.endboss[j].dmgCollisionCalc();
+                world.lvl.endboss[j].dmgCollisionCalc(20);
                 world.throwableObjects[i].collisionBottle = true;
                 soundPlay(configAUDIO.broken_bottle_audio, 0.5, 0.5)
                 soundPlay(configAUDIO.chicken_audio, 0.4, 1);

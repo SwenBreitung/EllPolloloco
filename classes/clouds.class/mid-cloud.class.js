@@ -22,16 +22,4 @@ class MidCloud extends MovableObjekt {
         this.animateMoveCloud();
         this.y = 60 + Math.random() * 10;
     }
-
-
-    /**
-     * This function defines the movement of the cloud and its speed.
-     * 
-     * @param {number} millisecond - Die Anzahl der Millisekunden, in denen die Animation abläuft.
-     * @param {number} speed - Die Geschwindigkeit der Wolke, die an die nächste Funktion übergeben wird.
-     */
-    animateMoveCloud() {
-        this.moveLeft(this.millisecond, this.speed);
-    }
-
 }

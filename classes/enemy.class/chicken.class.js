@@ -67,7 +67,6 @@ class Chicken extends MovableObjekt {
      * This function defines the speed.
      * 
      */
-
     getXSpeed() {
         return this.speed
     }

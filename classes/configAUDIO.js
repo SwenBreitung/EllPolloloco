@@ -7,18 +7,15 @@ class ConfigAUDIO {
     sound = false;
     isGameStart = false;
     playMusic = false
-
+    soundOnOff = true;
     // backgroundgame sounds
-
     BACKGROUND_AUDIO_GAME = new Audio('audio/background_musik/emotive-film-music-28052.mp3');
     BACKGROUND_AUDIO_FIGHT = new Audio('audio/fight_musik/cinematic-music-sketches-11-cinematic-percussion-sketch-116186.mp3');
 
     //background Startscreen
-
     start_backgroundSound = new Audio('audio/background_musik/beautiful-memories-123086.mp3');
 
     //character sounds
-
     walking_audio = new Audio('./audio/running.mp3');
     jump_audio = new Audio('audio/jumping_1-6452.mp3');
 
@@ -76,11 +73,13 @@ function restartSound(sound) {
  * @param {number} time - This is the time at which the track should start playing.
  */
 function soundPlay(sound, volume, time) {
-    if (time > 0) {
-        sound.currentTime = time;
+    if (configAUDIO.soundOnOff) {
+        if (time > 0) {
+            sound.currentTime = time;
+        }
+        sound.play();
+        sound.volume = volume;
     }
-    sound.play();
-    sound.volume = volume;
 }
 
 
@@ -90,10 +89,12 @@ function soundPlay(sound, volume, time) {
 function musicOnOff() {
     if (configAUDIO.music) {
         configAUDIO.music = false;
+        switchMusicIcon();
     } else {
         configAUDIO.music = true;
         configAUDIO.playMusic = true;
         startMusic();
+        switchMusicIcon();
     }
 }
 

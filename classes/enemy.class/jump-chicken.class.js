@@ -7,7 +7,7 @@ class JumpChicken extends MovableObjekt {
     width = 30;
     height = 50;
     x = 400;
-    speed = 2 + Math.random() * 0.25;
+    speed = 1 + Math.random() * 0.25;
     isSpotted = false
     originalX = 1700;
     maxMoveDistance = 500;

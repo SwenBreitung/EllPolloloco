@@ -49,6 +49,12 @@ class DrawableObjekt {
     }
 
 
+    drawText(ctx) {
+        ctx.font = `${this.textSize}px blackOpsOne`;
+        ctx.fillText(this.coinCount, this.xText, this.yText, this.width, this.height);
+    }
+
+
     /**
      * This function modifies the borders of the images to visualize collision sizes.
      * This is only required for optimization purposes.

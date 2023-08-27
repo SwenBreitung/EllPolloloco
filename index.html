@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>El Pollo Loco</title>
 
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="img/objekte/mexico-g1b46101a5_1280.png" type="image/x-icon">
@@ -59,7 +59,7 @@
 
 <body id="body" class="column" onload="init()">
     <h1 id="h1" class="">El Pollo Loco</h1>
-    <div class="canvas-container">
+    <div class="canvas-container" id="canvas-container">
         <canvas id="canvas" width="720" height="480"></canvas>
         <div id="iconbar" class="iconbar ">
             <div class="icon-top-menu ">
@@ -74,7 +74,6 @@
                 <a class="icon-right" href="#">
                     <img id="btnJump" src="img/icons/jump.png" alt="jump icon">
                     <img id="btnRight" src="img/icons/arrows_next_right_last_forward_arrow.svg" onclick="" alt="move arrow right icon">
-
                 </a>
             </div>
         </div>
@@ -88,8 +87,15 @@
                 </div>
             </div>
         </div>
-        <div id="end-screen" class="d-none"></div>
-        <div id="menu-screen" class="d-none" onclick="closeMenu(event)">
+        <div id="end-screen" class="d-none">
+            <div id="end-screen-text"></div>
+            <button class="btn-end-screen" onclick="restartGame()">Restart</button>
+        </div>
+        <div class="backgroud-color">
+            <div class=" overlay-image"></div>
+        </div>
+        <div id="menu-screen" class="d-none" onclick="closeMenu(event) ">
+            <button class="btn-end-screen " onclick="restartGame() ">Restart</button>
         </div>
     </div>
 

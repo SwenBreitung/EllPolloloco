@@ -96,9 +96,13 @@ class MovableObjekt extends DrawableObjekt {
      * @returns Returns whether a collision is happening or not.
      */
     isColliding(obj) {
+        // this.x + this.offsetX, this.y + this.offsetY, this.width - 2 * this.offsetX, this.height - 2 * this.offsetY
         return (this.x + this.width) >= obj.x && this.x <= (obj.x + obj.width) &&
             (this.y + this.offsetY + this.height) >= obj.y &&
             (this.y + this.offsetY) <= (obj.y + obj.height);
+        // return ((this.x + this.offsetX) + this.width) >= obj.x && this.x <= ((obj.x + this.offsetX) + obj.width) &&
+        //     ((this.y + this.offsetY) + this.height) >= (obj.y + obj.offsetY) &&
+        //     (this.y + this.offsetY) <= ((obj.y + obj.offsetY) + obj.height);
     }
 
     //Bottle engery Calc--------------------------------------------------
@@ -143,17 +147,12 @@ class MovableObjekt extends DrawableObjekt {
      * Here, 20% is added to the character's HP (health points).
      */
     hitpointsPositivCalc() {
-        this.hitpoints += 20;;
+        this.character.hitpoints += 20;;
     }
 
-
-    /**
-     * Here, 20% is added to the character's coin count.
-     */
     coinsPositivCalc() {
-        this.coins += 20;;
+        this.statusBarCoin.coinCount++;
     }
-
 
     //Bottle engery Calc END==============================================
 
@@ -164,8 +163,8 @@ class MovableObjekt extends DrawableObjekt {
      * This function performs calculations after a collision with damage. It reduces the character's hit points by a certain value
      * and ensures that the hit points do not fall below a certain value.
      */
-    dmgCollisionCalc() {
-        this.dmgHit20HP();
+    dmgCollisionCalc(dmg) {
+        this.dmgHit(dmg);
         this.clampHitpointsNULL();
     }
 
@@ -173,8 +172,8 @@ class MovableObjekt extends DrawableObjekt {
     /**
      * This function subtracts 20 hit points (HP).
      */
-    dmgHit20HP() {
-        this.hitpoints -= 20;
+    dmgHit(dmg) {
+        this.hitpoints -= dmg;
     }
 
     //dmg calc END===========================================================
@@ -210,5 +209,44 @@ class MovableObjekt extends DrawableObjekt {
         let timePassed = new Date() - this.lastHit;
         timePassed = timePassed / 1000;
         return timePassed < 1;
+    }
+
+
+    /**
+     * This function defines the movement of the cloud and its speed.
+     * 
+     * @param {number} millisecond - Die Anzahl der Millisekunden, in denen die Animation abläuft.
+     * @param {number} speed - Die Geschwindigkeit der Wolke, die an die nächste Funktion übergeben wird.
+     */
+    animateMoveCloud() {
+        this.moveLeft(this.millisecond, this.speed);
+    }
+
+
+    spawn() {
+        this.speedY = 280;
+        this.applyGravity();
+    }
+
+    /**
+     * This function lists the enemies that can detect the character.
+     */
+    spottingEnemys() {
+        setInterval(() => {
+            this.isCharacterSpottedByEnemy(this.world.lvl.endboss);
+            this.isCharacterSpottedByEnemy(this.world.lvl.jumpChickens);
+        }, 500);
+    }
+
+
+    /**
+     * This function checks if enemies have spotted the character.
+     * 
+     * @param {Array} enemy - All enemies equipped with a spotting function.
+     */
+    isCharacterSpottedByEnemy(enemys) {
+        enemys.forEach((enemy, i) => {
+            this.enemySpotCharacter(enemy, i);
+        });
     }
 }

@@ -14,8 +14,9 @@ class Character extends MovableObjekt {
     hitpoints = 100;
     bottleEnergy = 0;
     lastHit = 0;
-    coins = 0;
+
     otherDiscption = false;
+    throwToRigh = true;
     inactivityTimer = 0;
 
     IMG_WALKIN = [
@@ -115,9 +116,8 @@ class Character extends MovableObjekt {
      * @param {string} this.world.camera_x - Defines the world view.
      */
     moving() {
-        setStoppebleInterval(() => {
+        setInterval(() => {
             this.movementSoundStopped();
-
             if (this.hitpoints > 0) {
                 this.moveRight();
                 this.moveLeft();
@@ -167,7 +167,6 @@ class Character extends MovableObjekt {
      */
     moveRight() {
         this.moveRightPressKey();
-
     }
 
 
@@ -176,6 +175,7 @@ class Character extends MovableObjekt {
      */
     moveLeftPressKey() {
         if (this.world.keyboard.LEFT && this.x > -719) {
+            this.throwToRigh = false;
             this.otherDiscption = true;
             this.soundPlayCharacter(configAUDIO.walking_audio, 0.2)
             this.x -= this.speed;
@@ -188,6 +188,7 @@ class Character extends MovableObjekt {
      */
     moveRightPressKey() {
         if (this.world.keyboard.RIGHT && this.x < this.world.lvl.lvl_end_x) {
+            this.throwToRigh = true;
             this.otherDiscption = false;
             this.soundPlayCharacter(configAUDIO.walking_audio, 0.2)
             this.x += this.speed;
@@ -199,7 +200,7 @@ class Character extends MovableObjekt {
      * Initiates the animation of the character.
      */
     animation() {
-        setStoppebleInterval(() => {
+        setInterval(() => {
             if (!this.isPlayerInactive()) {
                 this.inactivityTimer += 50;
                 this.idleAnimation();
@@ -209,7 +210,6 @@ class Character extends MovableObjekt {
             }
         }, 50);
     }
-
 
 
     /**
@@ -227,8 +227,11 @@ class Character extends MovableObjekt {
             this.playAnimation(this.IMG_HURT);
         } else if (this.isAboveGround()) {
             this.playAnimation(this.IMG_JUMPING);
+
         } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMG_WALKIN);
+        } else {
+            this.playAnimation(this.IMG_IDLE);
         }
     }
 
@@ -261,7 +264,7 @@ class Character extends MovableObjekt {
      * @returns Returns the timer time indicating when the character starts sleeping.
      */
     isCharacterSleepShort() {
-        return this.inactivityTimer >= 3000 && this.inactivityTimer < 8000
+        return this.inactivityTimer >= 30 && this.inactivityTimer < 8000
     }
 
 

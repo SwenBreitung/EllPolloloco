@@ -13,9 +13,9 @@ class Endboss extends MovableObjekt {
     lastHit = 0;
     width = 150;
     height = 200;
-    hitpoints = 200;
+    hitpoints = 120;
 
-    dmgHit = false;
+    isdmgHit = false;
     isSpotted = false;
     isMovingBack = false;
     spotDistance = 500;
@@ -139,7 +139,7 @@ class Endboss extends MovableObjekt {
         if (Math.abs(distanceToOriginalX) >= 5) {
             this.x += distanceToOriginalX > 2 ? 5 : -5;
             this.otherDiscption = distanceToOriginalX > 2;
-            this.otherDiscption = false; // Setze otherDescription auf true, wenn der Boss nach rechts läuft
+            this.otherDiscption = true; // Setze otherDescription auf true, wenn der Boss nach rechts läuft
         } else {
             this.x = this.originalX;
             this.otherDiscption = false; // Setze otherDescription auf true, wenn der Boss an der ursprünglichen Position ist
@@ -155,14 +155,18 @@ class Endboss extends MovableObjekt {
      * @param {number} distanceToCharacter - The distance between the boss and the character.
      */
     BossSpottingCharacter() {
-        // Wenn der Charakter gespottet wird
         const distanceToCharacter = this.distanceBossToCharacter();
 
         if (this.isWithinMaxMoveDistance) {
             this.x += distanceToCharacter > 0 ? -this.speed : this.speed;
+            if (this.speed) {
+                this.otherDiscption = false;
+            }
+
         } else {
             this.x += this.speed * 5;
             if (this.maxMovementRange()) {
+                this.otherDiscption = true;
                 this.speed *= -1;
             }
         }
@@ -255,7 +259,6 @@ class Endboss extends MovableObjekt {
                 this.playAnimation(this.IMG_WALKIN);
             } else if (this.hitpoints == 0) {
                 this.playAnimation(this.IMG_DEAD);
-
             }
         }, 400);
     }

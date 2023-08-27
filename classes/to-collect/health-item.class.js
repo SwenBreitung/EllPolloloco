@@ -4,8 +4,8 @@
  */
 class HealthItem extends MovableObjekt {
     y = 0;
-    width = 50;
-    height = 50;
+    width = 30;
+    height = 30;
     x = 50;
 
     /**
@@ -19,15 +19,5 @@ class HealthItem extends MovableObjekt {
         this.x = x + Math.random() * 250;;
         this.y = 100;
         this.spawn();
-    }
-
-
-    /**
-     * Makes the coin appear and initially fall downwards.
-     * Sets the vertical speed and applies gravity.
-     */
-    spawn() {
-        this.speedY = 280;
-        this.applyGravity();
     }
 }

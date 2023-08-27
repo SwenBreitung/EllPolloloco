@@ -4,10 +4,13 @@
  */
 class ThrowableObject extends MovableObjekt {
 
+
     collisionBottle = false;
     justThrewBottle = false;
     speedY = 30;
     alreadyHit = false
+    throwRight;
+
     IMG_THROW = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
         'img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
@@ -24,23 +27,24 @@ class ThrowableObject extends MovableObjekt {
         'img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
     ]
 
+
     /**
      * Initializes the ThrowableObject class.
      * 
      * @param {number} x - The x-coordinate.
      * @param {number} y - The y-coordinate.
      */
-    constructor(x, y) {
+    constructor(x, y, throwRight) {
         super().loadImg('img/6_salsa_bottle/salsa_bottle.png');
         this.x = x;
         this.y = y;
-        this.width = 150;
-        this.height = 100;
+        this.throwRight = throwRight;
+        this.width = 100;
+        this.height = 40;
         this.loadImgS(this.IMG_THROW);
         this.loadImgS(this.IMG_SPLASH);
         this.throw();
         this.animation();
-
     }
 
 
@@ -118,7 +122,11 @@ class ThrowableObject extends MovableObjekt {
      */
     speedX30() {
         setStoppebleInterval(function() {
-            this.x += 30;
+            if (this.throwRight) {
+                this.x += 30;
+            } else {
+                this.x -= 30;
+            }
         }.bind(this), 50);
     }
 }

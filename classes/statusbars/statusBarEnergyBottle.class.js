@@ -11,6 +11,7 @@ class StatusBarEnergyBottle extends DrawableObjekt {
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/80.png',
         'img/7_statusbars/1_statusbar/3_statusbar_bottle/orange/100.png',
     ]
+
     percentet = 0;
     x = 0;
     y = 50;
@@ -36,7 +37,6 @@ class StatusBarEnergyBottle extends DrawableObjekt {
         this.percentet = percentet
         let path = this.img_engery_bottle_orange[this.resolveStatusBarImageIndex()];
         this.img = this.imgCach[path];
-
     }
 
 

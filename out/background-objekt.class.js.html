@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: background-objekt.class.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,39 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: background-objekt.class.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * this class is the background
+ * @class
+ */
+class backgroundObjekt extends MovableObjekt {
+    y = 300;
+    height = 480;
+    width = 720;
 
+    /**
+     * Initializes the background.
+     * 
+     * @param {string} imgPath - The path to the background image.
+     * @param {number} x - The X-coordinate where the background should be placed.
+     */
+    constructor(imgPath, x) {
+        super().loadImg(imgPath);
+        this.x = x;
+        this.y = 480 - this.height;
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    }
+}</code></pre>
+        </article>
+    </section>
 
 
 
