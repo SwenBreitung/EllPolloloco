@@ -8,6 +8,7 @@ class ConfigAUDIO {
     isGameStart = false;
     playMusic = false
     soundOnOff = true;
+
     // backgroundgame sounds
     BACKGROUND_AUDIO_GAME = new Audio('audio/background_musik/emotive-film-music-28052.mp3');
     BACKGROUND_AUDIO_FIGHT = new Audio('audio/fight_musik/cinematic-music-sketches-11-cinematic-percussion-sketch-116186.mp3');
@@ -49,8 +50,14 @@ class ConfigAUDIO {
  * 
  * @param {string} sound - This is the soundtrack to be stopped.
  */
+
+
 function soundStop(sound) {
-    sound.pause();
+    try {
+        sound.pause();
+    } catch (error) {
+        // Leerer Catch-Block, es wird keine Fehlermeldung ausgegeben und nichts weiter unternommen
+    }
 }
 
 
@@ -74,9 +81,7 @@ function restartSound(sound) {
  */
 function soundPlay(sound, volume, time) {
     if (configAUDIO.soundOnOff) {
-        if (time > 0) {
-            sound.currentTime = time;
-        }
+        if (time > 0) { sound.currentTime = time; }
         sound.play();
         sound.volume = volume;
     }

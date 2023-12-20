@@ -28,9 +28,7 @@ class Level {
         infiniteChickens,
         midClouds,
         highClouds
-    )
-
-    {
+    ) {
         this.enemies = enemies;
         this.clouds = clouds;
         this.backgroundObjekts = backgroundObjekts;

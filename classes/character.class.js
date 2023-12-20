@@ -6,6 +6,12 @@ class Character extends MovableObjekt {
 
     y = 80;
     last_y;
+
+    offsetRight = 10;
+    offsetLeft = 10;
+    offsetTop = 75;
+    offsetButtom = 0;
+
     width = 100;
     height = 200;
     world;
@@ -81,7 +87,6 @@ class Character extends MovableObjekt {
         'img/2_character_pepe/1_idle/long_idle/I-18.png',
         'img/2_character_pepe/1_idle/long_idle/I-19.png',
         'img/2_character_pepe/1_idle/long_idle/I-20.png',
-
     ]
 
     /**
@@ -106,6 +111,7 @@ class Character extends MovableObjekt {
         this.moving();
         this.applyGravity();
         this.animation();
+        this.y = this.y;
     }
 
 
@@ -201,14 +207,17 @@ class Character extends MovableObjekt {
      */
     animation() {
         setInterval(() => {
-            if (!this.isPlayerInactive()) {
+            if (this.isDead()) {
+                this.playAnimation(this.IMG_DEAD);
+                isLose(this);
+            } else if (!this.isPlayerInactive() && (this.isAboveGround() + 5)) {
                 this.inactivityTimer += 50;
                 this.idleAnimation();
             } else {
                 this.inactivityTimer = 0
                 this.moveAnimation()
             }
-        }, 50);
+        }, 30);
     }
 
 
@@ -220,18 +229,12 @@ class Character extends MovableObjekt {
      * If the character is moving left or right, the running animation will be played.
      */
     moveAnimation() {
-        if (this.isDead()) {
-            this.playAnimation(this.IMG_DEAD);
-            isLose(this);
-        } else if (this.isHurt()) {
+        if (this.isHurt()) {
             this.playAnimation(this.IMG_HURT);
         } else if (this.isAboveGround()) {
             this.playAnimation(this.IMG_JUMPING);
-
         } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
             this.playAnimation(this.IMG_WALKIN);
-        } else {
-            this.playAnimation(this.IMG_IDLE);
         }
     }
 
@@ -264,7 +267,7 @@ class Character extends MovableObjekt {
      * @returns Returns the timer time indicating when the character starts sleeping.
      */
     isCharacterSleepShort() {
-        return this.inactivityTimer >= 30 && this.inactivityTimer < 8000
+        return this.inactivityTimer >= 100 && this.inactivityTimer < 8000
     }
 
 
@@ -284,7 +287,9 @@ class Character extends MovableObjekt {
      * @param {number} volume - The variable determining the volume level.
      */
     soundPlayCharacter(sound, volume) {
-        sound.play();
-        sound.volume = volume;
+        if (configAUDIO.soundOnOff) {
+            sound.play();
+            sound.volume = volume;
+        }
     }
 }

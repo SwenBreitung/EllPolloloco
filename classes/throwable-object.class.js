@@ -4,7 +4,6 @@
  */
 class ThrowableObject extends MovableObjekt {
 
-
     collisionBottle = false;
     justThrewBottle = false;
     speedY = 30;
@@ -73,9 +72,8 @@ class ThrowableObject extends MovableObjekt {
      * This function animates the throw animation.
      */
     throwAnimation() {
-        if (world.keyboard.SHIFT && world.character.bottleEnergy >= 20 && !this.collisionBottle) {
+        if (world.keyboard.SHIFT && world.character.bottleEnergy >= 20 && !this.collisionBottle)
             this.playAnimation(this.IMG_THROW);
-        }
     }
 
 
@@ -86,11 +84,8 @@ class ThrowableObject extends MovableObjekt {
         if (this.collisionBottle) {
             this.width = 50;
             this.height = 50;
-            console.log('treffer');
             this.playAnimation(this.IMG_SPLASH);
-            requestAnimationFrame(() => {
-                this.collisionBottle = false;
-            });
+            requestAnimationFrame(() => this.collisionBottle = false);
         }
     }
 
@@ -112,9 +107,7 @@ class ThrowableObject extends MovableObjekt {
     /**
      * This function sets the y speed to 30.
      */
-    speedY30() {
-        this.speedY = 30;
-    }
+    speedY30 = () => this.speedY = 30;
 
 
     /**

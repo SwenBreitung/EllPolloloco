@@ -3,22 +3,32 @@
  * @class
  */
 class JumpChicken extends MovableObjekt {
-    y = 390;
+    y = 420;
     width = 30;
-    height = 50;
+    height = 30;
     x = 400;
+
+    offsetRight = -5;
+    offsetLeft = -5;
+    offsetTop = -10;
+    offsetBottom = -10;
+
     speed = 1 + Math.random() * 0.25;
     isSpotted = false
     originalX = 1700;
     maxMoveDistance = 500;
     maxBossCharacterDistance = 300;
     spotDistance = 300;
+    isDead = false;
+    isSplicing = false;
 
     IMG_WALKIN = [
         'img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
         'img/3_enemies_chicken/chicken_small/1_walk/3_w.png'
     ];
+
+    IMG_DEAD = ['img/3_enemies_chicken/chicken_small/2_dead/dead.png'];
 
     /**
      * Initializes the jump-Chicken class.
@@ -31,7 +41,8 @@ class JumpChicken extends MovableObjekt {
      */
     constructor(imgPath, x) {
         super().loadImg(imgPath);
-        this.loadImgS(this.IMG_WALKIN)
+        this.loadImgS(this.IMG_WALKIN);
+        this.loadImgS(this.IMG_DEAD);
         this.x = x + Math.random() * 1500;
         this.animation();
         this.applyGravity();
@@ -43,10 +54,12 @@ class JumpChicken extends MovableObjekt {
      * This function defines the setInterval for the movement functions.
      */
     moving() {
-
         setInterval(() => {
-            this.moveLeft(200, this.speed);
-            this.jumpingLeft();
+            if (!this.isSplicing) {
+                this.moveLeft(200, this.speed);
+                this.jumpingLeft();
+                this.y = 410;
+            }
         }, 300);
     }
 
@@ -58,7 +71,7 @@ class JumpChicken extends MovableObjekt {
         if (this.isSpotted) {
             this.jumping();
             this.speed = 2 + Math.random() * 0.25;
-            this.moveLeft(50, this.speed + 2);
+            this.moveLeft(50, this.speed + 1);
             this.isSpotted = false;
         }
     }
@@ -78,6 +91,13 @@ class JumpChicken extends MovableObjekt {
      * This function defines the setInterval for the walking animation.
      */
     animation() {
-        setInterval(() => this.playAnimation(this.IMG_WALKIN), 50);
+        setInterval(() => {
+            if (!this.isSplicing) {
+                this.playAnimation(this.IMG_WALKIN)
+            } else {
+                this.playAnimation(this.IMG_DEAD)
+                this.speedY = -15;
+            }
+        }, 1000 / 60);
     }
 }

@@ -7,6 +7,12 @@ class InfiniteChicken extends MovableObjekt {
     width = 50;
     height = 60;
     x;
+
+    offsetRight = 5;
+    offsetLeft = 5;
+    offsetTop = 10;
+    offsetBottom = 0;
+
     otherDiscption = false;
 
     speed = 3 + Math.random() * 0.25;
@@ -19,6 +25,8 @@ class InfiniteChicken extends MovableObjekt {
     maxMoveDistance = 500;
     maxBossCharacterDistance = 300;
     spotDistance = 300;
+    isDead = false;
+    isSplicing = false;
 
     IMG_WALKIN = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -26,7 +34,7 @@ class InfiniteChicken extends MovableObjekt {
         'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png',
     ];
 
-
+    IMG_DEAD = ['img/3_enemies_chicken/chicken_normal/2_dead/dead.png'];
     /**
      * Initializes the Endboss class.
      * 
@@ -39,6 +47,7 @@ class InfiniteChicken extends MovableObjekt {
     constructor(imgPath, x) {
         super().loadImg(imgPath);
         this.loadImgS(this.IMG_WALKIN)
+        this.loadImgS(this.IMG_DEAD);
         this.x = x + Math.random() * 1500;
         this.originalX = this.x;
         this.animation();
@@ -61,8 +70,10 @@ class InfiniteChicken extends MovableObjekt {
      * This function displays the different motion patterns.
      */
     infiniteChickenMove() {
-        this.infiniteChickenMoveRight();
-        this.infiniteChickenMoveLeft();
+        if (!this.isSplicing) {
+            this.infiniteChickenMoveRight();
+            this.infiniteChickenMoveLeft();
+        }
     }
 
 
@@ -151,8 +162,15 @@ class InfiniteChicken extends MovableObjekt {
      * This function defines the loading of the walking animation.
      */
     animation() {
-        setInterval(() => this.playAnimation(this.IMG_WALKIN), 50);
+        setInterval(() => {
+            if (this.isSplicing) {
+                this.playAnimation(this.IMG_DEAD)
+            } else {
+                this.playAnimation(this.IMG_WALKIN)
+            }
+        }, 500);
     }
+
 
     /**
      * This function checks if the maximum range has been reached.

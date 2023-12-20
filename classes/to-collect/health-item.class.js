@@ -8,6 +8,12 @@ class HealthItem extends MovableObjekt {
     height = 30;
     x = 50;
 
+    offsetRight = 0;
+    offsetLeft = 0;
+    offsetTop = 0;
+    offsetBottom = 0;
+
+
     /**
      * Initializes a health item at a specific X-coordinate.
      * 

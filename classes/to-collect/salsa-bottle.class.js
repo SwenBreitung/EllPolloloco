@@ -3,10 +3,15 @@
   * @class
   */
  class SalsaBottle extends MovableObjekt {
-     y = 200;
+     y;
      width = 50;
      height = 50;
-     x = 0;
+     x = 400;
+
+     offsetRight = 10;
+     offsetLeft = 20;
+     offsetTop = 10;
+     offesetBottom = 10;
 
      /**
       * Initializes a salt bottle at a specific X-coordinate.
@@ -23,8 +28,6 @@
 
 
      animation() {
-         setStoppebleInterval(() => {
-             this.playAnimation(level.salsaBottle);
-         }, 50);
+         setInterval(() => this.playAnimation(this.salsaBottle), 500);
      }
  }

@@ -30,6 +30,7 @@ class World {
         this.draw();
         this.setWorld();
         this.run();
+        this.spliceEnemy()
     }
 
 
@@ -58,9 +59,7 @@ class World {
     /**
      * This function ensures that 'this' inherits all information from the Character object.
      */
-    setWorld() {
-        this.character.world = this;
-    }
+    setWorld() { this.character.world = this; }
 
 
     /**
@@ -70,9 +69,7 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0)
         let self = this
-        requestAnimationFrame(function() {
-            self.draw();
-        });
+        requestAnimationFrame(this.draw.bind(this));
         this.addToMapForEach(this.lvl.backgroundObjekts);
         this.addToMapForEachAllObjekts();
         this.ctx.translate(-this.camera_x, 0)
@@ -114,6 +111,10 @@ class World {
     }
 
 
+    /**
+     * This function adds text to the map for the coin status bar, considering camera position.
+     * @param {object} e - The object that contains the necessary data and methods for drawing text.
+     */
     addToMapTextCoinStatusbar(e) {
         this.ctx.translate(-this.camera_x, 0)
         e.drawText(this.ctx)
@@ -155,14 +156,10 @@ class World {
      * @param {string} e - Individual images from the arrays.
      */
     addToMap(e) {
-        if (e.otherDiscption) {
-            this.flippImg(e);
-        }
+        e.otherDiscption && this.flippImg(e);
         e.draw(this.ctx);
         // e.drawBorder(this.ctx);
-        if (e.otherDiscption) {
-            this.flippImgBack(e);
-        }
+        e.otherDiscption && this.flippImgBack(e);
     }
 
 
@@ -171,11 +168,7 @@ class World {
      * 
      * @param {string} arry - Arrays of animation sequences.
      */
-    addToMapForEach(arry) {
-        arry.forEach(e => {
-            this.addToMap(e)
-        });
-    }
+    addToMapForEach(arry) { arry.forEach(e => this.addToMap(e)); }
 
 
     /**
@@ -194,7 +187,6 @@ class World {
      * This lists all relevant functions.
      */
     run() {
-
         setInterval(() => {
             this.playBackgroundMusic();
             isLose(this);
@@ -204,7 +196,7 @@ class World {
         setInterval(() => {
             this.checkThrowObject();
             this.checkColision();
-        }, 50);
+        }, 1000 / 60);
         this.handleEnemyCollisions();
         this.character.spottingEnemys();
     }
@@ -224,9 +216,7 @@ class World {
             let bottle = new ThrowableObject(this.character.x, this.character.y, throwright);
             this.throwableObjects.push(bottle);
             this.throwableObjects.justThrewBottle = true;
-            setTimeout(() => {
-                this.throwableObjects.justThrewBottle = false;
-            }, 1000)
+            setTimeout(() => this.throwableObjects.justThrewBottle = false, 1000)
         }
     }
 
@@ -248,14 +238,14 @@ class World {
      * Additionally, it calculates the amount of HP to deduct from the character upon collision.
      */
     handleCollisionWithEndboss() {
-        setStoppebleInterval(() => {
+        setInterval(() => {
             this.lvl.endboss.forEach((endboss) => {
                 if (this.character.isColliding(endboss)) {
-                    this.character.dmgCollisionCalc(80);
+                    this.character.dmgCollisionCalc(100);
                     this.statusBar.setPercentet(this.character.hitpoints);
                 }
             });
-        }, 500);
+        }, 1000 / 60);
     }
 
 
@@ -263,11 +253,36 @@ class World {
      * This function checks which enemies collide with the character at a setInterval of 50.
      */
     killEnemy() {
-        setStoppebleInterval(() => {
+        setInterval(() => {
             this.lvl.enemies.forEach((enemy, i) => this.killWithCollidingEnemy(enemy, i, this.lvl.enemies));
             this.spawnChickens.forEach((spawnChicken, i) => this.killWithCollidingEnemy(spawnChicken, i, this.spawnChickens));
             this.lvl.infiniteChickens.forEach((infiniteChicken, i) => this.killWithCollidingEnemy(infiniteChicken, i, this.lvl.infiniteChickens));
-        }, 50);
+            this.lvl.jumpChickens.forEach((jumpChicken, i) => this.killWithCollidingEnemy(jumpChicken, i, this.lvl.jumpChickens));
+        }, 1000 / 60);
+    }
+
+    /**
+     * This function periodically removes elements from different arrays containing enemy-related objects.
+     */
+    spliceEnemy() {
+        setInterval(() => {
+            this.lvl.enemies.forEach((enemy, i) => this.splicing(i, this.lvl.enemies));
+            this.spawnChickens.forEach((spawnChicken, i) => this.splicing(i, this.spawnChickens));
+            this.lvl.infiniteChickens.forEach((infiniteChicken, i) => this.splicing(i, this.lvl.infiniteChickens));
+            this.lvl.jumpChickens.forEach((jumpChicken, i) => this.splicing(i, this.lvl.jumpChickens));
+        }, 1000);
+    }
+
+
+    /**
+     * This function removes an element from the given array at the specified index if the 'isSplicing' property of the element is true.
+     * @param {number} i - The index of the element to be checked and removed.
+     * @param {Array} arry - The array from which the element should be removed.
+     */
+    splicing(i, arry) {
+        if (arry[i].isSplicing) {
+            arry.splice(i, 1)
+        }
     }
 
 
@@ -280,10 +295,10 @@ class World {
      * @param {number} i - The position of the element in the array used for collision calculation.
      * @param {Array} arry - The array from which the element should be removed.
      */
-    killWithCollidingEnemy(enemys, i, arry) {
-        if (this.character.isColliding(enemys) && this.character.isAboveGround() && this.character.y - this.character.last_y > 0) {
+    killWithCollidingEnemy(enemy, i, arry) {
+        if (this.character.isColliding(enemy) && this.character.isAboveGround() && !arry[i].isSplicing && this.character.y - this.character.last_y > 0) {
             soundPlay(configAUDIO.chicken_audio, 0.4, 1);
-            arry.splice(i, 1);
+            arry[i].isSplicing = true;
         }
     }
 
@@ -307,7 +322,7 @@ class World {
      * @param {string} enemy - This is the individual enemy object.
      */
     dmgFromEnemy(enemy) {
-        if (this.character.isColliding(enemy) && !this.character.isAboveGround()) {
+        if (this.character.isColliding(enemy) && !this.character.isAboveGround() && !enemy.isSplicing) {
             this.character.dmgCollisionCalc(20);
             this.statusBar.setPercentet(this.character.hitpoints);
         }
@@ -364,9 +379,7 @@ class World {
      * 
      * @returns {boolean} `true` if hit points are less than 100, otherwise `false`.
      */
-    maxHitpoints() {
-        return this.character.hitpoints < 100;
-    }
+    maxHitpoints = () => this.character.hitpoints < 100;
 
 
     /**
@@ -376,9 +389,7 @@ class World {
      * 
      * @returns {boolean} `true` if coins are less than 100, otherwise `false`.
      */
-    max100EnergyCoins() {
-        return this.character.coins < 100;
-    }
+    max100EnergyCoins = () => this.character.coins < 100;
 
 
     /**
@@ -388,9 +399,7 @@ class World {
      * 
      * @returns {boolean} `true` if bottle energy is less than 100, otherwise `false`.
      */
-    max100EnergyBottle() {
-        return this.character.bottleEnergy < 100;
-    }
+    max100EnergyBottle = () => this.character.bottleEnergy < 100;
 
 
     //-----------------------------------Flipp the Objekt and return----------------------------

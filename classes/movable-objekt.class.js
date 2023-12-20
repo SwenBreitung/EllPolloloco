@@ -6,6 +6,7 @@ class MovableObjekt extends DrawableObjekt {
 
     speedY = 0;
     acceleration = 2.5;
+    x = 0;
 
     offsetY = 10;
     offsetX = 20;
@@ -31,7 +32,9 @@ class MovableObjekt extends DrawableObjekt {
      */
     moveLeft(milliseconds, speed) {
         setInterval(() => {
-            this.x -= speed;
+            if (!this.isSplicing) {
+                this.x -= speed;
+            }
         }, milliseconds)
     }
 
@@ -96,13 +99,10 @@ class MovableObjekt extends DrawableObjekt {
      * @returns Returns whether a collision is happening or not.
      */
     isColliding(obj) {
-        // this.x + this.offsetX, this.y + this.offsetY, this.width - 2 * this.offsetX, this.height - 2 * this.offsetY
-        return (this.x + this.width) >= obj.x && this.x <= (obj.x + obj.width) &&
-            (this.y + this.offsetY + this.height) >= obj.y &&
-            (this.y + this.offsetY) <= (obj.y + obj.height);
-        // return ((this.x + this.offsetX) + this.width) >= obj.x && this.x <= ((obj.x + this.offsetX) + obj.width) &&
-        //     ((this.y + this.offsetY) + this.height) >= (obj.y + obj.offsetY) &&
-        //     (this.y + this.offsetY) <= ((obj.y + obj.offsetY) + obj.height);
+        return this.x + this.width - this.offsetRight >= obj.x + obj.offsetLeft &&
+            this.y + this.offsetTop <= obj.y + obj.height - obj.offsetBottom &&
+            this.x + this.offsetLeft <= obj.x + obj.width - obj.offsetRight &&
+            this.y + this.height - this.offsetBottom > obj.y + obj.offsetTop;
     }
 
     //Bottle engery Calc--------------------------------------------------
@@ -115,44 +115,29 @@ class MovableObjekt extends DrawableObjekt {
     enemySpotCharacter(mo) {
         const distanceX = Math.abs(this.x - mo.x);
         const distanceY = Math.abs(this.y + this.offsetY - mo.y);
-        // Berechne die Entfernung zwischen dem Boss und dem Charakter
         const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-        // Überprüfe, ob der Charakter innerhalb der Spottentfernung ist
-        if (distance <= mo.spotDistance) {
-            mo.isSpotted = true;
-            // console.log('gefunden');
-        } else {
-            mo.isSpotted = false;
-        }
+        mo.isSpotted = distance <= mo.spotDistance ? true : false;
     }
 
 
     /**
      * Here, 20% of energy is deducted from the character's bottle energy.
      */
-    bottleEngeryNegativCalc() {
-        this.bottleEnergy -= 20;;
-    }
+    bottleEngeryNegativCalc() { this.bottleEnergy -= 20; }
 
 
     /**
      * Here, 20% is added to the character's bottle energy.
      */
-    bottleEngeryPositivCalc() {
-        this.bottleEnergy += 20;;
-    }
+    bottleEngeryPositivCalc() { this.bottleEnergy += 20; }
 
 
     /**
      * Here, 20% is added to the character's HP (health points).
      */
-    hitpointsPositivCalc() {
-        this.character.hitpoints += 20;;
-    }
+    hitpointsPositivCalc() { this.character.hitpoints += 20;; }
 
-    coinsPositivCalc() {
-        this.statusBarCoin.coinCount++;
-    }
+    coinsPositivCalc() { this.statusBarCoin.coinCount++; }
 
     //Bottle engery Calc END==============================================
 
@@ -172,9 +157,7 @@ class MovableObjekt extends DrawableObjekt {
     /**
      * This function subtracts 20 hit points (HP).
      */
-    dmgHit(dmg) {
-        this.hitpoints -= dmg;
-    }
+    dmgHit(dmg) { this.hitpoints -= dmg; }
 
     //dmg calc END===========================================================
 
@@ -183,11 +166,8 @@ class MovableObjekt extends DrawableObjekt {
      * they are set to zero. Otherwise, the time of the last hit is updated.
      */
     clampHitpointsNULL() {
-        if (this.hitpoints < 0) {
-            this.hitpoints = 0;
-        } else {
-            this.lastHit = new Date().getTime();
-        }
+        this.hitpoints = Math.max(0, this.hitpoints);
+        this.lastHit = this.hitpoints === 0 ? new Date().getTime() : this.lastHit;
     }
 
 
@@ -195,9 +175,7 @@ class MovableObjekt extends DrawableObjekt {
      * 
      * @returns Returns whether the HP have fallen to 0.
      */
-    isDead() {
-        return this.hitpoints == 0;
-    }
+    isDead() { return this.hitpoints == 0; }
 
 
     /**
@@ -218,15 +196,14 @@ class MovableObjekt extends DrawableObjekt {
      * @param {number} millisecond - Die Anzahl der Millisekunden, in denen die Animation abläuft.
      * @param {number} speed - Die Geschwindigkeit der Wolke, die an die nächste Funktion übergeben wird.
      */
-    animateMoveCloud() {
-        this.moveLeft(this.millisecond, this.speed);
-    }
+    animateMoveCloud() { this.moveLeft(this.millisecond, this.speed); }
 
 
     spawn() {
         this.speedY = 280;
         this.applyGravity();
     }
+
 
     /**
      * This function lists the enemies that can detect the character.
@@ -245,8 +222,6 @@ class MovableObjekt extends DrawableObjekt {
      * @param {Array} enemy - All enemies equipped with a spotting function.
      */
     isCharacterSpottedByEnemy(enemys) {
-        enemys.forEach((enemy, i) => {
-            this.enemySpotCharacter(enemy, i);
-        });
+        enemys.forEach((enemy, i) => this.enemySpotCharacter(enemy, i));
     }
 }

@@ -6,6 +6,12 @@ class Endboss extends MovableObjekt {
     y = 255;
     x = 1700;
     originalX = 1700;
+
+    offsetRight = 10;
+    offsetLeft = 10;
+    offsetTop = 10;
+    offsetBottom = 15;
+
     maxMoveDistance = 500;
     maxBossCharacterDistance = 300;
 
@@ -19,6 +25,7 @@ class Endboss extends MovableObjekt {
     isSpotted = false;
     isMovingBack = false;
     spotDistance = 500;
+
 
     otherDiscption = false;
     IMG_WALKIN = [
@@ -139,10 +146,13 @@ class Endboss extends MovableObjekt {
         if (Math.abs(distanceToOriginalX) >= 5) {
             this.x += distanceToOriginalX > 2 ? 5 : -5;
             this.otherDiscption = distanceToOriginalX > 2;
-            this.otherDiscption = true; // Setze otherDescription auf true, wenn der Boss nach rechts läuft
+            if (this.characterX < this.bossX) {
+                this.otherDiscption = true;
+            }
+            this.otherDiscption = true;
         } else {
             this.x = this.originalX;
-            this.otherDiscption = false; // Setze otherDescription auf true, wenn der Boss an der ursprünglichen Position ist
+            this.otherDiscption = false;
         }
     }
 

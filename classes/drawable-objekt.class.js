@@ -5,9 +5,16 @@
 class DrawableObjekt {
     x = 50;
     y;
+
+    offsetRight = 0;
+    offsetLeft = 0;
+    offsetTop = 0;
+    offsetBottom = 0;
+
     img;
     currentImg = 0;
     imgCach = {};
+
 
     isBossTurned = false;
     width;
@@ -62,7 +69,7 @@ class DrawableObjekt {
      * @param {CanvasRenderingContext2D} ctx - The canvas context on which the image is to be drawn.
      */
     drawBorder(ctx) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof SalsaBottle || this instanceof HealthItem || this instanceof JumpChicken || this instanceof InfiniteChicken) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof SalsaBottle || this instanceof HealthItem || this instanceof JumpChicken || this instanceof InfiniteChicken || this instanceof Coin || this instanceof ThrowableObject || this instanceof SpawnChicken) {
             ctx.beginPath();
             this.drawBlueBorder(ctx);
 
@@ -95,7 +102,12 @@ class DrawableObjekt {
     drawRedBorder(ctx) {
         ctx.lineWidth = '5';
         ctx.strokeStyle = 'red';
-        ctx.rect(this.x + this.offsetX, this.y + this.offsetY, this.width - 2 * this.offsetX, this.height - 2 * this.offsetY);
+        ctx.strokeRect(
+            this.x + this.offsetLeft,
+            this.y + this.offsetTop,
+            this.width - this.offsetLeft - this.offsetRight,
+            this.height - this.offsetTop - this.offsetBottom
+        );
         ctx.stroke();
     }
 }

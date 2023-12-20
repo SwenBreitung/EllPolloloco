@@ -8,6 +8,12 @@ class Coin extends MovableObjekt {
     height = 100;
     x = 0;
 
+
+    offsetRight = 30;
+    offsetLeft = 30;
+    offsetTop = 30;
+    offsetBottom = 30;
+
     /**
      * Initializes the coin.
      */
